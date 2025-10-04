@@ -1,7 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Search, Filter, Grid2x2 as Grid, List, SlidersHorizontal } from 'lucide-react';
-import { products, categories } from '../data/products';
+import { Products, categories } from '../data/product';
 import ProductCard from '../components/ProductCard';
 import Button from '../components/Button';
 

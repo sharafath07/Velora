@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ShoppingCart, Heart } from 'lucide-react';
-import { Product } from '../data/products';
+import { Products } from '../data/product';
 import { useCart } from '../context/CartContext';
 
 const ProductCard = ({ product, className = '' }) => {

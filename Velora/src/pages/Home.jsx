@@ -1,12 +1,12 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Star, Truck, Shield, Headphones } from 'lucide-react';
-import { products } from '../data/products';
+import { Products } from '../data/product';
 import ProductCard from '../components/ProductCard';
 import Button from '../components/Button';
 
 const Home = () => {
-  const featuredProducts = products.filter(product => product.featured).slice(0, 6);
+  const featuredProducts = Products.filter(product => product.featured).slice(0, 6);
 
   return (
     <div className="min-h-screen">

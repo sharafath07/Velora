@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft, Heart, Share2, Star, Truck, RotateCcw, Shield } from 'lucide-react';
-import { products } from '../data/products';
+import { Products } from '../data/product';
 import { useCart } from '../context/CartContext';
 import Button from '../components/Button';
 import ProductCard from '../components/ProductCard';
