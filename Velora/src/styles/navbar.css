@@ -1,6 +1,6 @@
 /* Navbar Styles */
 .navbar {
-  background: rgba(255, 255, 255, 0.95);
+  background: #FFF8F4;
   backdrop-filter: blur(10px);
   box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.08);
   border-bottom: 1px solid rgba(230, 165, 181, 0.1);
@@ -27,9 +27,13 @@
   font-family: 'Playfair Display', serif;
   font-size: 1.5rem;
   font-weight: 700;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #F0A2B2;
   background: var(--primary-gradient);
   -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
   background-clip: text;
   text-decoration: none;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
@@ -38,7 +42,6 @@
 
 .navbar-logo:hover {
   transform: scale(1.05);
-  filter: drop-shadow(0 2px 4px rgba(230, 165, 181, 0.3));
 }
 
 .navbar-nav {

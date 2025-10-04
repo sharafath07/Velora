@@ -23,7 +23,7 @@ const Home = () => {
         
         <div className="relative text-center text-white px-4 animate-fade-in z-10">
           <h1 className="font-serif text-5xl md:text-7xl font-bold mb-6">
-            Velora
+            VELORA
           </h1>
           <p className="text-xl md:text-2xl mb-8 font-light max-w-2xl mx-auto">
             Where elegance meets sophistication. Discover our curated collection of luxury fashion.
@@ -66,7 +66,7 @@ const Home = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 mb-12">
+          <div className="product-card-container">
             {featuredProducts.map((product) => (
               <ProductCard 
                 key={product.id} 

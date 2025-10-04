@@ -1,6 +1,17 @@
 /* Product Card Styles */
+.product-card-container {
+  /* display: grid; */
+  /* grid-template-columns: repeat(1, 1fr); */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  flex-direction: row;
+  gap: 1.5rem;
+  padding: 2rem 0.5rem;
+}
 .product-card {
   position: relative;
+  width: 400px;
   background: linear-gradient(145deg, #ffffff 0%, #fefefe 100%);
   border-radius: 1rem;
   box-shadow: var(--shadow-lg);

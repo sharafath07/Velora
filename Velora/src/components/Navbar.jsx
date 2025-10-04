@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { ShoppingBag, Menu, X, Search, User } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import image from '../assets/velora-logo.png';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -25,8 +26,9 @@ const isActiveLink = (path) => {
       <div className="navbar-container">
         <div className="navbar-content">
           {/* Logo */}
-          <Link to="/" className="navbar-logo">
-            Velora
+          <Link to="/" className="navbar-logo" >
+            <img src={image} alt="" width={53.5} height={50}/>
+            VELORA
           </Link>
 
           {/* Desktop Navigation */}
