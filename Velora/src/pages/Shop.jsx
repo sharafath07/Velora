@@ -25,7 +25,7 @@ const Shop = () => {
     };
 
     const filteredAndSortedProducts = useMemo(() => {
-        let filtered = products.filter(product => {
+        let filtered = Products.filter(product => {
             const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                                                      product.description.toLowerCase().includes(searchTerm.toLowerCase());
             const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory;
@@ -161,7 +161,7 @@ const Shop = () => {
                 {/* Products Grid */}
                 <div className="shop-results">
                     <p className="shop-results-text">
-                        Showing {filteredAndSortedProducts.length} of {products.length} products
+                        Showing {filteredAndSortedProducts.length} of {Products.length} products
                     </p>
                 </div>
 

@@ -16,7 +16,7 @@ const ProductDetail = () => {
     const [quantity, setQuantity] = useState(1);
     const [activeImageIndex, setActiveImageIndex] = useState(0);
 
-    const product = products.find(p => p.id === parseInt(id || '0'));
+    const product = Products.find(p => p.id === parseInt(id || '0'));
 
     if (!product) {
         return (
