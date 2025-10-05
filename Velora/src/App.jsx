@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { use , useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { CartProvider } from './context/CartContext';
 import Navbar from './components/Navbar';
@@ -11,6 +11,11 @@ import About from './pages/About';
 import Contact from './pages/Contact';
 
 function App() {
+  useEffect(() => {
+    return () => {
+      <Home />
+    }
+  }, []);
   return (
     <CartProvider>
       <Router>

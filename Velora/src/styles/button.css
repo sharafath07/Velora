@@ -12,6 +12,7 @@
   outline: none;
   position: relative;
   overflow: hidden;
+  margin-bottom: 10px;
 }
 
 .btn::before {
