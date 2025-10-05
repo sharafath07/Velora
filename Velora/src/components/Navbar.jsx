@@ -9,6 +9,7 @@ const Navbar = () => {
   const { getCartItemsCount } = useCart();
   const location = useLocation();
   const cartItemsCount = getCartItemsCount();
+  const [ifLogedIn, setIfLogedIn] = useState(false);
 
   const navItems = [
     { name: 'Home', path: '/' },
@@ -54,6 +55,7 @@ const isActiveLink = (path) => {
               <Search size={20} />
             </button>
             <button className="navbar-icon-btn">
+              <Link to="/"></Link>
               <User size={20} />
             </button>
             <Link to="/cart" className="navbar-cart-btn">
@@ -108,7 +110,9 @@ const isActiveLink = (path) => {
                   <Search size={20} />
                 </button>
                 <button className="navbar-icon-btn">
-                  <User size={20} />
+                  {
+                    ifLogedIn ? <Link to="/profile"><User size={20} /></Link> : <Link to="/login">Login/Signup</Link>
+                  }
                 </button>
               </div>
             </div>

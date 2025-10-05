@@ -11,37 +11,7 @@ const Home = () => {
   return (
     <div className="min-h-screen">
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center bg-gradient-to-r from-gray-50 to-primary-light overflow-hidden">
-        <div className="absolute inset-0 bg-black bg-opacity-20" />
-        <div 
-          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-          style={{
-            backgroundImage: 'url("https://images.pexels.com/photos/1536619/pexels-photo-1536619.jpeg?auto=compress&cs=tinysrgb&w=1920")',
-          }}
-        />
-        <div className="absolute inset-0 bg-black bg-opacity-40" />
-        
-        <div className="relative text-center text-white px-4 animate-fade-in z-10">
-          <h1 className="font-serif text-5xl md:text-7xl font-bold mb-6">
-            VELORA
-          </h1>
-          <p className="text-xl md:text-2xl mb-8 font-light max-w-2xl mx-auto">
-            Where elegance meets sophistication. Discover our curated collection of luxury fashion.
-          </p>
-          <Link to="/shop">
-            <Button size="lg" className="text-lg px-8 py-4">
-              Shop Collection
-              <ArrowRight className="ml-2" size={20} />
-            </Button>
-          </Link>
-        </div>
-        
-        {/* Promotional Banner */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 bg-white bg-opacity-90 backdrop-blur-sm px-6 py-3 rounded-full z-10">
-          <p className="text-gray-800 font-medium">Free shipping on orders over $200 • 30-day returns</p>
-        </div>
-      </section>
-
+      
       {/* Promotional Banners */}
       <section className="py-4 bg-primary text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
