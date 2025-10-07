@@ -64,7 +64,7 @@ const Register = () => {
                     <p className="mt-2 text-center text-sm text-gray-600">
                         Or{' '}
                         <Link
-                            to="/login"
+                            to="/Velora/login"
                             className="font-medium text-primary hover:text-primary-dark"
                         >
                             sign in to your existing account

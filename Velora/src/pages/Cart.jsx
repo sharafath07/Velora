@@ -14,7 +14,7 @@ const Cart = () => {
           <ShoppingBag size={64} className="text-gray-300 mx-auto mb-4" />
           <h2 className="font-serif text-2xl font-bold text-gray-900 mb-4">Your cart is empty</h2>
           <p className="text-gray-600 mb-8">Discover our beautiful collection of luxury clothing</p>
-          <Link to="/shop">
+          <Link to="/Velora/shop">
             <Button size="lg">
               Start Shopping
             </Button>
@@ -33,7 +33,7 @@ const Cart = () => {
             <h1 className="font-serif text-3xl font-bold text-gray-900">Shopping Cart</h1>
             <p className="text-gray-600 mt-1">{state.items.length} items in your cart</p>
           </div>
-          <Link to="/shop" className="text-primary hover:text-primary-dark flex items-center">
+          <Link to="/Velora/shop" className="text-primary hover:text-primary-dark flex items-center">
             <ArrowLeft size={16} className="mr-2" />
             Continue Shopping
           </Link>
@@ -46,7 +46,7 @@ const Cart = () => {
               <div key={`${item.id}-${item.selectedSize}-${item.selectedColor}`} className="bg-white rounded-lg shadow-sm p-6">
                 <div className="flex items-start space-x-4">
                   {/* Product Image */}
-                  <Link to={`/product/${item.id}`}>
+                  <Link to={`/Velora/product/${item.id}`}>
                     <img
                       src={item.image}
                       alt={item.name}
@@ -57,7 +57,7 @@ const Cart = () => {
                   {/* Product Info */}
                   <div className="flex-1 min-w-0">
                     <Link 
-                      to={`/product/${item.id}`}
+                      to={`/Velora/product/${item.id}`}
                       className="font-semibold text-lg text-gray-900 hover:text-primary transition-colors duration-200"
                     >
                       {item.name}
@@ -177,7 +177,7 @@ const Cart = () => {
   );
 };
             {/* Continue Shopping */}
-            <Link to="/shop" className="block text-center">
+            <Link to="/Velora/shop" className="block text-center">
               <Button variant="outline" className="w-full py-3 mb-4">
                 Continue Shopping
               </Button>

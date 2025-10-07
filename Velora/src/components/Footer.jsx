@@ -32,17 +32,17 @@ const Footer = () => {
             <h4 className="footer-section-title">Quick Links</h4>
             <ul className="footer-links">
               <li>
-                <Link to="/shop" className="footer-link">
+                <Link to="/Velora/shop" className="footer-link">
                   Shop All
                 </Link>
               </li>
               <li>
-                <Link to="/about" className="footer-link">
+                <Link to="/Velora/about" className="footer-link">
                   About Us
                 </Link>
               </li>
               <li>
-                <Link to="/contact" className="footer-link">
+                <Link to="/Velora/contact" className="footer-link">
                   Contact
                 </Link>
               </li>

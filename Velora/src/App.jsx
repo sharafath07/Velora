@@ -20,14 +20,14 @@ function App() {
           <Navbar />
           <main className="flex-1">
             <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/shop" element={<Shop />} />
-              <Route path="/product/:id" element={<ProductDetail />} />
-              <Route path="/cart" element={<Cart />} />
-              <Route path="/about" element={<About />} />
-              <Route path="/contact" element={<Contact />} />
-              <Route path="/login" element={<Login />}/>
-              <Route path="/profile" element={<Dashboard />}/>
+              <Route path="/Velora/" element={<Home />} />
+              <Route path="/Velora/shop" element={<Shop />} />
+              <Route path="/Velora/product/:id" element={<ProductDetail />} />
+              <Route path="/Velora/cart" element={<Cart />} />
+              <Route path="/Velora/about" element={<About />} />
+              <Route path="/Velora/contact" element={<Contact />} />
+              <Route path="/Velora/login" element={<Login />}/>
+              <Route path="/Velora/profile" element={<Dashboard />}/>
             </Routes>
           </main>
           <Footer />

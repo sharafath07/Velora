@@ -47,7 +47,7 @@ const Home = () => {
           </div>
 
           <div className="text-center">
-            <Link to="/shop">
+            <Link to="/Velora/shop">
               <Button variant="outline" size="lg">
                 View All Products
               </Button>
@@ -77,7 +77,7 @@ const Home = () => {
             ].map((category) => (
               <Link
                 key={category.name}
-                to={`/shop?category=${category.name}`}
+                to={`/Velora/shop?category=${category.name}`}
                 className="group relative overflow-hidden rounded-lg aspect-square"
               >
                 <img
@@ -113,7 +113,7 @@ const Home = () => {
                 meticulous attention to detail, ensuring that every woman feels extraordinary 
                 in her Velora ensemble.
               </p>
-              <Link to="/about">
+              <Link to="/Velora/about">
                 <Button variant="outline">
                   Learn More About Us
                 </Button>

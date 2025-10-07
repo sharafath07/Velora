@@ -19,7 +19,7 @@ const handleQuickAdd = (e) => {
 
   return (
     <div className={`product-card ${className}`}>
-      <Link to={`/product/${product.id}`}>
+      <Link to={`/Velora/product/${product.id}`}>
         {/* Product Image */}
         <div className="product-card-image-container">
           <img

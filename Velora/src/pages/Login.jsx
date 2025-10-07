@@ -52,7 +52,7 @@ const Login = () => {
                     <p className="mt-2 text-center text-sm text-gray-600">
                         Or{' '}
                         <Link
-                            to="/register"
+                            to="/Velora/register"
                             className="font-medium text-primary hover:text-primary-dark"
                         >
                             create a new account
@@ -116,7 +116,7 @@ const Login = () => {
                     <div className="flex items-center justify-between">
                         <div className="text-sm">
                             <Link
-                                to="/forgot-password"
+                                to="/Velora/forgot-password"
                                 className="font-medium text-primary hover:text-primary-dark"
                             >
                                 Forgot your password?

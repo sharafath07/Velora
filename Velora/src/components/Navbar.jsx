@@ -12,10 +12,10 @@ const Navbar = () => {
   const [ifLogedIn, setIfLogedIn] = useState(false);
 
   const navItems = [
-    { name: 'Home', path: '/' },
-    { name: 'Shop', path: '/shop' },
-    { name: 'About', path: '/about' },
-    { name: 'Contact', path: '/contact' },
+    { name: 'Home', path: '/Velora/' },
+    { name: 'Shop', path: '/Velora/shop' },
+    { name: 'About', path: '/Velora/about' },
+    { name: 'Contact', path: '/Velora/contact' },
   ];
 
 const isActiveLink = (path) => {
@@ -27,7 +27,7 @@ const isActiveLink = (path) => {
       <div className="navbar-container">
         <div className="navbar-content">
           {/* Logo */}
-          <Link to="/" className="navbar-logo" >
+          <Link to="/Velora/" className="navbar-logo" >
             <img src={image} alt="" width={53.5} height={50}/>
             VELORA
           </Link>
@@ -55,10 +55,10 @@ const isActiveLink = (path) => {
               <Search size={20} />
             </button>
             <button className="navbar-icon-btn">
-              <Link to="/"></Link>
+              <Link to="/Velora/"></Link>
               <User size={20} />
             </button>
-            <Link to="/cart" className="navbar-cart-btn">
+            <Link to="/Velora/cart" className="navbar-cart-btn">
               <ShoppingBag size={20} />
               {cartItemsCount > 0 && (
                 <span className="navbar-cart-badge">
@@ -70,7 +70,7 @@ const isActiveLink = (path) => {
 
           {/* Mobile menu button */}
           <div className="navbar-mobile md:hidden">
-            <Link to="/cart" className="navbar-cart-btn">
+            <Link to="/Velora/cart" className="navbar-cart-btn">
               <ShoppingBag size={20} />
               {cartItemsCount > 0 && (
                 <span className="navbar-cart-badge">
@@ -111,7 +111,7 @@ const isActiveLink = (path) => {
                 </button>
                 <button className="navbar-icon-btn">
                   {
-                    ifLogedIn ? <Link to="/profile"><User size={20} /></Link> : <Link to="/login">Login/Signup</Link>
+                    ifLogedIn ? <Link to="/Velora/profile"><User size={20} /></Link> : <Link to="/Velora/login">Login/Signup</Link>
                   }
                 </button>
               </div>
