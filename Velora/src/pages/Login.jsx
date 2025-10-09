@@ -1,159 +1,149 @@
 import React, { useState } from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Eye, EyeOff, LogIn } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
-import Button from '../components/Button';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
+import '../styles/login.css';
 
 const Login = () => {
-  const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-  });
-  const [showPassword, setShowPassword] = useState(false);
+  const [isSignUpMode, setIsSignUpMode] = useState(false);
+  const [signInData, setSignInData] = useState({ email: '', password: '' });
+  const [signUpData, setSignUpData] = useState({ name: '', email: '', password: '' });
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
 
-  const { login } = useAuth();
+  const { login, signup } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const from = location.state?.from?.pathname || '/Velora/';
 
-  const from = location.state?.from?.pathname || '/';
-
-  const handleChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-    setError('');
+  const handleChange = (e, formType) => {
+    const { name, value } = e.target;
+    formType === 'signin'
+      ? setSignInData({ ...signInData, [name]: value })
+      : setSignUpData({ ...signUpData, [name]: value });
   };
 
-  const handleSubmit = async (e) => {
+  const handleSignIn = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
-
     try {
-      await login(formData.email, formData.password);
+      await login(signInData.email, signInData.password);
       navigate(from, { replace: true });
-    } catch (error) {
-      setError(error.message || 'Login failed');
+    } catch (err) {
+      setError(err.message || 'Login failed');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleSignUp = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    try {
+      await signup(signUpData.email, signUpData.password, signUpData.name);
+      setIsSignUpMode(false);
+    } catch (err) {
+      setError(err.message || 'Registration failed');
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50 py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8">
-        <div>
-          <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">
-            Sign in to your account
-          </h2>
-          <p className="mt-2 text-center text-sm text-gray-600">
-            Or{' '}
-            <Link
-              to="/register"
-              className="font-medium text-primary hover:text-primary-dark"
-            >
-              create a new account
-            </Link>
-          </p>
+    <div className='login-main'>
+      <div className={`login-container ${isSignUpMode ? 'right-panel-active' : ''}`} id="container">
+        {/* Sign Up */}
+        <div className="form-container sign-up-container">
+          <form onSubmit={handleSignUp}>
+            <h1>Create Account</h1>
+            {/* <div className="social-container">
+              <a href="#" className="social"><i className="fab fa-facebook-f"></i></a>
+              <a href="#" className="social"><i className="fab fa-google-plus-g"></i></a>
+              <a href="#" className="social"><i className="fab fa-linkedin-in"></i></a>
+            </div>
+            <span>or use your email for registration</span> */}
+            <input
+              type="text"
+              placeholder="Name"
+              name="name"
+              value={signUpData.name}
+              onChange={(e) => handleChange(e, 'signup')}
+              required
+            />
+            <input
+              type="email"
+              placeholder="Email"
+              name="email"
+              value={signUpData.email}
+              onChange={(e) => handleChange(e, 'signup')}
+              required
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              name="password"
+              value={signUpData.password}
+              onChange={(e) => handleChange(e, 'signup')}
+              required
+            />
+            <button type="submit" disabled={isLoading}>
+              {isLoading ? 'Creating...' : 'Sign Up'}
+            </button>
+          </form>
         </div>
-        <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
-              {error}
-            </div>
-          )}
-          <div className="space-y-4">
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700">
-                Email address
-              </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                autoComplete="email"
-                required
-                value={formData.email}
-                onChange={handleChange}
-                className="mt-1 appearance-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
-                placeholder="Enter your email"
-              />
-            </div>
-            <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
-                Password
-              </label>
-              <div className="mt-1 relative">
-                <input
-                  id="password"
-                  name="password"
-                  type={showPassword ? 'text' : 'password'}
-                  autoComplete="current-password"
-                  required
-                  value={formData.password}
-                  onChange={handleChange}
-                  className="appearance-none relative block w-full px-3 py-2 pr-10 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-md focus:outline-none focus:ring-primary focus:border-primary focus:z-10 sm:text-sm"
-                  placeholder="Enter your password"
-                />
-                <button
-                  type="button"
-                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                  onClick={() => setShowPassword(!showPassword)}
-                >
-                  {showPassword ? (
-                    <EyeOff className="h-5 w-5 text-gray-400" />
-                  ) : (
-                    <Eye className="h-5 w-5 text-gray-400" />
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
 
-          <div className="flex items-center justify-between">
-            <div className="text-sm">
-              <Link
-                to="/forgot-password"
-                className="font-medium text-primary hover:text-primary-dark"
-              >
-                Forgot your password?
-              </Link>
+        {/* Sign In */}
+        <div className="form-container sign-in-container">
+          <form onSubmit={handleSignIn}>
+            <h1>Sign in</h1>
+            {/* <div className="social-container">
+              <a href="#" className="social"><i className="fab fa-facebook-f"></i></a>
+              <a href="#" className="social"><i className="fab fa-google-plus-g"></i></a>
+              <a href="#" className="social"><i className="fab fa-linkedin-in"></i></a>
+            </div>
+            <span>or use your account</span> */}
+            <input
+              type="email"
+              placeholder="Email"
+              name="email"
+              value={signInData.email}
+              onChange={(e) => handleChange(e, 'signin')}
+              required
+            />
+            <input
+              type="password"
+              placeholder="Password"
+              name="password"
+              value={signInData.password}
+              onChange={(e) => handleChange(e, 'signin')}
+              required
+            />
+            <Link to="/Velora/forgot-password">Forgot your password?</Link>
+            <button type="submit" disabled={isLoading}>
+              {isLoading ? 'Signing in...' : 'Sign In'}
+            </button>
+            {error && <p style={{ color: 'red', fontSize: '12px' }}>{error}</p>}
+          </form>
+        </div>
+
+        {/* Overlay */}
+        <div className="overlay-container">
+          <div className="overlay">
+            <div className="overlay-panel overlay-left">
+              <h1>Welcome Back!</h1>
+              <p>To keep connected with us please login with your personal info</p>
+              <button className="ghost" id="signIn" onClick={() => setIsSignUpMode(false)}>
+                Sign In
+              </button>
+            </div>
+            <div className="overlay-panel overlay-right">
+              <h1>Hello, Friend!</h1>
+              <p>Enter your personal details and start your journey with us</p>
+              <button className="ghost" id="signUp" onClick={() => setIsSignUpMode(true)}>
+                Sign Up
+              </button>
             </div>
           </div>
-
-          <div>
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className="w-full flex justify-center py-2 px-4"
-              size="lg"
-            >
-              {isLoading ? (
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white" />
-              ) : (
-                <>
-                  <LogIn className="mr-2 h-5 w-5" />
-                  Sign in
-                </>
-              )}
-            </Button>
-          </div>
-
-          <div className="text-center">
-            <p className="text-sm text-gray-600">
-              Demo accounts:
-            </p>
-            <p className="text-xs text-gray-500 mt-1">
-              Admin: admin@example.com / Admin123!
-            </p>
-            <p className="text-xs text-gray-500">
-              User: user@example.com / User123!
-            </p>
-          </div>
-        </form>
+        </div>
       </div>
     </div>
   );

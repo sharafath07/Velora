@@ -14,15 +14,16 @@ import Contact from './pages/Contact';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
+import AdminDashboard from './pages/AdminDashboard';
 import Profile from './pages/Profile';
 import Activities from './pages/Activities';
 import Settings from './pages/Settings';
-import AdminDashboard from './pages/AdminDashboard';
 import AdminUsers from './pages/AdminUsers';
 import AdminAnalytics from './pages/AdminAnalytics';
 import AdminActivities from './pages/AdminActivities';
 import AdminSettings from './pages/AdminSettings';
 import Unauthorized from './pages/Unauthorized';
+import Orders from './pages/Orders';
 
 function App() {
   return (
@@ -35,9 +36,9 @@ function App() {
               <Route path="/Velora/login" element={<Login />} />
               <Route path="/Velora/register" element={<Register />} />
               <Route path="/Velora/unauthorized" element={<Unauthorized />} />
-
+              
               {/* Public Routes with Navbar/Footer */}
-              <Route path="/Velora/" element={
+              <Route path="/Velora" element={
                 <div className="min-h-screen flex flex-col">
                   <Navbar />
                   <main className="flex-1">
@@ -111,6 +112,11 @@ function App() {
               <Route path="/Velora/settings" element={
                 <ProtectedRoute>
                   <Settings />
+                </ProtectedRoute>
+              } />
+              <Route path="/Velora/orders" element={
+                <ProtectedRoute>
+                  <Orders />
                 </ProtectedRoute>
               } />
 
