@@ -1,6 +1,6 @@
 /* Navbar Styles */
 .navbar {
-  background: rgba(255, 255, 255, 0.95);
+  background: #FEF9F5;
   backdrop-filter: blur(10px);
   box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.08);
   border-bottom: 1px solid rgba(230, 165, 181, 0.1);
@@ -27,13 +27,26 @@
   font-family: 'Playfair Display', serif;
   font-size: 1.5rem;
   font-weight: 700;
-  background: var(--primary-gradient);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  /* background: var(--primary-gradient); */
+  /* -webkit-background-clip: text; */
+  /* -webkit-text-fill-color: transparent; */
+  /* background-clip: text; */
   text-decoration: none;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+}
+
+.navbar-logo>span{
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #F0A1B1;
+}
+
+.navbar-logo>img{
+  margin-right: 5px;
 }
 
 .navbar-logo:hover {

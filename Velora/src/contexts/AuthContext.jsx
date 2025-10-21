@@ -1,262 +1,100 @@
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import { useState, useEffect, createContext, useContext } from "react";
+import { account } from "../lib/appwriteConfig"; // make sure this is configured correctly
+import { ID } from "appwrite";
+import LoadingSpinner from "../components/LoadingSpinner";
 
 const AuthContext = createContext(undefined);
 
-const initialState = {
-    user: null,
-    token: localStorage.getItem('token'),
-    isLoading: true,
-    isAuthenticated: false,
-};
-
-const authReducer = (state, action) => {
-    switch (action.type) {
-        case 'LOGIN_START':
-            return {
-                ...state,
-                isLoading: true,
-            };
-        case 'LOGIN_SUCCESS':
-            localStorage.setItem('token', action.payload.token);
-            return {
-                ...state,
-                user: action.payload.user,
-                token: action.payload.token,
-                isLoading: false,
-                isAuthenticated: true,
-            };
-        case 'LOGIN_FAILURE':
-            localStorage.removeItem('token');
-            return {
-                ...state,
-                user: null,
-                token: null,
-                isLoading: false,
-                isAuthenticated: false,
-            };
-        case 'LOGOUT':
-            localStorage.removeItem('token');
-            return {
-                ...state,
-                user: null,
-                token: null,
-                isLoading: false,
-                isAuthenticated: false,
-            };
-        case 'UPDATE_USER':
-            return {
-                ...state,
-                user: action.payload,
-            };
-        case 'SET_LOADING':
-            return {
-                ...state,
-                isLoading: action.payload,
-            };
-        default:
-            return state;
-    }
-};
-
 export const AuthProvider = ({ children }) => {
-    const [state, dispatch] = useReducer(authReducer, initialState);
+  const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
 
-    const API_URL = 'http://localhost:5000/api';
+  // On mount, check if the user is already logged in
+  useEffect(() => {
+    checkUserStatus();
+  }, []);
 
-    useEffect(() => {
-        const checkAuth = async () => {
-            const token = localStorage.getItem('token');
-            if (token) {
-                try {
-                    const response = await fetch(`${API_URL}/auth/me`, {
-                        headers: {
-                            Authorization: `Bearer ${token}`,
-                        },
-                    });
+  // LOGIN FUNCTION
+  const loginUser = async (email, password) => {
+    setLoading(true);
+    try {
+      // v21 syntax for email/password login
+      await account.createEmailPasswordSession(email, password);
 
-                    if (response.ok) {
-                        const data = await response.json();
-                        dispatch({
-                            type: 'LOGIN_SUCCESS',
-                            payload: { user: data.data, token },
-                        });
-                    } else {
-                        dispatch({ type: 'LOGIN_FAILURE' });
-                    }
-                } catch (error) {
-                    dispatch({ type: 'LOGIN_FAILURE' });
-                }
-            } else {
-                dispatch({ type: 'SET_LOADING', payload: false });
-            }
-        };
-
-        checkAuth();
-    }, []);
-
-    const login = async (email, password) => {
-        dispatch({ type: 'LOGIN_START' });
-
-        try {
-            const response = await fetch(`${API_URL}/auth/login`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email, password }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                dispatch({
-                    type: 'LOGIN_SUCCESS',
-                    payload: { user: data.user, token: data.token },
-                });
-            } else {
-                dispatch({ type: 'LOGIN_FAILURE' });
-                throw new Error(data.message || 'Login failed');
-            }
-        } catch (error) {
-            dispatch({ type: 'LOGIN_FAILURE' });
-            throw error;
-        }
-    };
-
-    const register = async (userData) => {
-        dispatch({ type: 'LOGIN_START' });
-
-        try {
-            const response = await fetch(`${API_URL}/auth/register`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(userData),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                dispatch({
-                    type: 'LOGIN_SUCCESS',
-                    payload: { user: data.user, token: data.token },
-                });
-            } else {
-                dispatch({ type: 'LOGIN_FAILURE' });
-                throw new Error(data.message || 'Registration failed');
-            }
-        } catch (error) {
-            dispatch({ type: 'LOGIN_FAILURE' });
-            throw error;
-        }
-    };
-
-    const logout = async () => {
-        try {
-            await fetch(`${API_URL}/auth/logout`, {
-                method: 'GET',
-                headers: {
-                    Authorization: `Bearer ${state.token}`,
-                },
-            });
-        } catch (error) {
-            console.error('Logout error:', error);
-        } finally {
-            dispatch({ type: 'LOGOUT' });
-        }
-    };
-
-    const updateProfile = async (userData) => {
-        try {
-            const response = await fetch(`${API_URL}/auth/updateprofile`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${state.token}`,
-                },
-                body: JSON.stringify(userData),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                dispatch({ type: 'UPDATE_USER', payload: data.data });
-            } else {
-                throw new Error(data.message || 'Profile update failed');
-            }
-        } catch (error) {
-            throw error;
-        }
-    };
-
-    const updatePassword = async (currentPassword, newPassword) => {
-        try {
-            const response = await fetch(`${API_URL}/auth/updatepassword`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${state.token}`,
-                },
-                body: JSON.stringify({ currentPassword, newPassword }),
-            });
-
-            const data = await response.json();
-
-            if (response.ok) {
-                dispatch({
-                    type: 'LOGIN_SUCCESS',
-                    payload: { user: data.user, token: data.token },
-                });
-            } else {
-                throw new Error(data.message || 'Password update failed');
-            }
-        } catch (error) {
-            throw error;
-        }
-    };
-
-    const forgotPassword = async (email) => {
-        try {
-            const response = await fetch(`${API_URL}/auth/forgotpassword`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ email }),
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.message || 'Password reset failed');
-            }
-        } catch (error) {
-            throw error;
-        }
-    };
-
-    return (
-        <AuthContext.Provider
-            value={{
-                state,
-                login,
-                register,
-                logout,
-                updateProfile,
-                updatePassword,
-                forgotPassword,
-            }}
-        >
-            {children}
-        </AuthContext.Provider>
-    );
-};
-
-export const useAuth = () => {
-    const context = useContext(AuthContext);
-    if (context === undefined) {
-        throw new Error('useAuth must be used within an AuthProvider');
+      // Get current user details
+      const accountDetails = await account.get();
+      setUser(accountDetails);
+    } catch (error) {
+      console.error("Login error:", error);
+      setUser(null);
     }
-    return context;
+    setLoading(false);
+  };
+
+  // LOGOUT FUNCTION
+  const logoutUser = async () => {
+    setLoading(true);
+    try {
+      await account.deleteSession({ sessionId: "current" });
+      setUser(null);
+    } catch (error) {
+      console.error("Logout error:", error);
+    }
+    setLoading(false);
+  };
+
+  // REGISTER FUNCTION
+  const registerUser = async ({ name, email, password1 }) => {
+    setLoading(true);
+    try {
+      // Create new user
+      await account.create({
+        userId: ID.unique(),
+        email,
+        password: password1,
+        name,
+      });
+
+      // Automatically log in after registration
+      await account.createEmailSession(email, password1);
+
+      const accountDetails = await account.get();
+      setUser(accountDetails);
+    } catch (error) {
+      console.error("Registration error:", error);
+      setUser(null);
+    }
+    setLoading(false);
+  };
+
+  // CHECK CURRENT USER SESSION
+  const checkUserStatus = async () => {
+    setLoading(true);
+    try {
+      const accountDetails = await account.get();
+      setUser(accountDetails);
+    } catch (error) {
+      // No active session, user not logged in
+      setUser(null);
+    }
+    setLoading(false);
+  };
+
+  const contextData = {
+    user,
+    loginUser,
+    logoutUser,
+    registerUser,
+    checkUserStatus,
+  };
+
+  return (
+    <AuthContext.Provider value={contextData}>
+      {loading ? <LoadingSpinner /> : children}
+    </AuthContext.Provider>
+  );
 };
+
+export const useAuth = () => useContext(AuthContext);
+
+export default AuthContext;

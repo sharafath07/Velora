@@ -1,56 +1,68 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { ShoppingBag, Menu, X, Search, User, ChevronDown, LogOut, Settings as SettingsIcon, LayoutDashboard, Package } from 'lucide-react';
+import {
+  ShoppingBag,
+  Menu,
+  X,
+  Search,
+  User,
+  ChevronDown,
+  LogOut,
+  Settings as SettingsIcon,
+  LayoutDashboard,
+  Package,
+} from 'lucide-react';
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../contexts/AuthContext';
+import logo from '../assets/velora-logo.png';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+
   const { getCartItemsCount } = useCart();
-  const { state: authState, logout } = useAuth();
-  const location = useLocation();
+  const { user, logoutUser } = useAuth();
+
   const navigate = useNavigate();
-  const cartItemsCount = getCartItemsCount();
+  const location = useLocation();
   const userMenuRef = useRef(null);
+  const cartItemsCount = getCartItemsCount();
 
   const navItems = [
-    { name: 'Home', path: '/' },
-    { name: 'Shop', path: '/shop' },
-    { name: 'About', path: '/about' },
-    { name: 'Contact', path: '/contact' },
+    { name: 'Home', path: '/Velora/' },
+    { name: 'Shop', path: '/Velora/shop' },
+    { name: 'About', path: '/Velora/about' },
+    { name: 'Contact', path: '/Velora/contact' },
   ];
 
-  const isActiveLink = (path) => {
-    return location.pathname === path;
-  };
+  const isActiveLink = (path) => location.pathname === path;
 
   const handleLogout = () => {
-    logout();
+    logoutUser();
     setIsUserMenuOpen(false);
-    navigate('/');
+    navigate('/Velora/');
   };
 
+  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
         setIsUserMenuOpen(false);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   return (
     <nav className="navbar">
       <div className="navbar-container">
+        {/* --- Main Navbar Content --- */}
         <div className="navbar-content">
           {/* Logo */}
-          <Link to="/" className="navbar-logo">
-            Velora
+          <Link to="/Velora/" className="navbar-logo">
+            <img src={logo} alt="Velora" width={50} height={50} />
+            <span>Velora</span>
           </Link>
 
           {/* Desktop Navigation */}
@@ -59,118 +71,111 @@ const Navbar = () => {
               <Link
                 key={item.name}
                 to={item.path}
-                className={`navbar-nav-item ${
-                  isActiveLink(item.path)
-                    ? 'active'
-                    : ''
-                }`}
+                className={`navbar-nav-item ${isActiveLink(item.path) ? 'active' : ''}`}
               >
                 {item.name}
               </Link>
             ))}
           </div>
 
-          {/* Right side icons */}
+          {/* Right Side Icons */}
           <div className="navbar-actions md:flex">
             <button className="navbar-icon-btn">
               <Search size={20} />
             </button>
 
-            {/* Auth Button/User Menu */}
-            {authState.isAuthenticated && authState.user ? (
+            {/* User Menu / Auth */}
+            {user ? (
               <div className="navbar-user-menu" ref={userMenuRef}>
                 <button
                   className="navbar-user-btn"
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                 >
                   <User size={20} />
-                  <ChevronDown size={16} className={`navbar-user-chevron ${isUserMenuOpen ? 'open' : ''}`} />
+                  <ChevronDown
+                    size={16}
+                    className={`navbar-user-chevron ${isUserMenuOpen ? 'open' : ''}`}
+                  />
                 </button>
 
                 {isUserMenuOpen && (
                   <div className="navbar-dropdown">
                     <div className="navbar-dropdown-header">
                       <div className="navbar-dropdown-avatar">
-                        {authState.user.firstName[0]}{authState.user.lastName[0]}
+                        {user.name
+                          ? user.name
+                              .split(' ')
+                              .map((n) => n[0])
+                              .join('')
+                              .toUpperCase()
+                          : 'U'}
                       </div>
                       <div className="navbar-dropdown-user-info">
-                        <p className="navbar-dropdown-name">
-                          {authState.user.firstName} {authState.user.lastName}
-                        </p>
-                        <p className="navbar-dropdown-email">
-                          {authState.user.email}
-                        </p>
+                        <p className="navbar-dropdown-name">{user.name || 'User'}</p>
+                        <p className="navbar-dropdown-email">{user.email || ''}</p>
                       </div>
                     </div>
+
                     <div className="navbar-dropdown-divider"></div>
+
                     <Link
-                      to="/profile"
+                      to="/Velora/profile"
                       className="navbar-dropdown-item"
                       onClick={() => setIsUserMenuOpen(false)}
                     >
-                      <User size={16} />
-                      Profile
+                      <User size={16} /> Profile
                     </Link>
+
                     <Link
-                      to="/dashboard"
+                      to="/Velora/dashboard"
                       className="navbar-dropdown-item"
                       onClick={() => setIsUserMenuOpen(false)}
                     >
-                      <LayoutDashboard size={16} />
-                      Dashboard
+                      <LayoutDashboard size={16} /> Dashboard
                     </Link>
+
                     <Link
-                      to="/orders"
+                      to="/Velora/orders"
                       className="navbar-dropdown-item"
                       onClick={() => setIsUserMenuOpen(false)}
                     >
-                      <Package size={16} />
-                      Orders
+                      <Package size={16} /> Orders
                     </Link>
+
                     <Link
-                      to="/settings"
+                      to="/Velora/settings"
                       className="navbar-dropdown-item"
                       onClick={() => setIsUserMenuOpen(false)}
                     >
-                      <SettingsIcon size={16} />
-                      Settings
+                      <SettingsIcon size={16} /> Settings
                     </Link>
+
                     <div className="navbar-dropdown-divider"></div>
-                    <button
-                      className="navbar-dropdown-item logout"
-                      onClick={handleLogout}
-                    >
-                      <LogOut size={16} />
-                      Logout
+
+                    <button className="navbar-dropdown-item logout" onClick={handleLogout}>
+                      <LogOut size={16} /> Logout
                     </button>
                   </div>
                 )}
               </div>
             ) : (
-              <Link to="/login" className="navbar-login-btn">
+              <Link to="/Velora/login" className="navbar-login-btn">
                 Login / Signup
               </Link>
             )}
 
-            <Link to="/cart" className="navbar-cart-btn">
+            {/* Cart Icon */}
+            <Link to="/Velora/cart" className="navbar-cart-btn">
               <ShoppingBag size={20} />
-              {cartItemsCount > 0 && (
-                <span className="navbar-cart-badge">
-                  {cartItemsCount}
-                </span>
-              )}
+              {cartItemsCount > 0 && <span className="navbar-cart-badge">{cartItemsCount}</span>}
             </Link>
           </div>
 
-          {/* Mobile menu button */}
+          {/* Mobile Menu Button */}
           <div className="navbar-mobile md:hidden">
-            <Link to="/cart" className="navbar-cart-btn">
+            <Link to="/Velora/cart" className="navbar-cart-btn">
               <ShoppingBag size={20} />
-              {cartItemsCount > 0 && (
-                <span className="navbar-cart-badge">
-                  {cartItemsCount}
-                </span>
-              )}
+              {cartItemsCount > 0 && <span className="navbar-cart-badge">{cartItemsCount}</span>}
             </Link>
             <button
               onClick={() => setIsMenuOpen(!isMenuOpen)}
@@ -181,7 +186,7 @@ const Navbar = () => {
           </div>
         </div>
 
-        {/* Mobile menu */}
+        {/* Mobile Menu */}
         {isMenuOpen && (
           <div className="navbar-mobile-menu md:hidden">
             <div className="navbar-mobile-nav">
@@ -190,59 +195,50 @@ const Navbar = () => {
                   key={item.name}
                   to={item.path}
                   onClick={() => setIsMenuOpen(false)}
-                  className={`navbar-mobile-nav-item ${
-                    isActiveLink(item.path)
-                      ? 'active'
-                      : ''
-                  }`}
+                  className={`navbar-mobile-nav-item ${isActiveLink(item.path) ? 'active' : ''}`}
                 >
                   {item.name}
                 </Link>
               ))}
+
               <div className="navbar-mobile-actions">
-                <button className="navbar-icon-btn">
-                  <Search size={20} />
-                </button>
-                {authState.isAuthenticated && authState.user ? (
+                {user ? (
                   <>
                     <Link
-                      to="/profile"
+                      to="/Velora/profile"
                       className="navbar-mobile-nav-item"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Profile
                     </Link>
                     <Link
-                      to="/dashboard"
+                      to="/Velora/dashboard"
                       className="navbar-mobile-nav-item"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Dashboard
                     </Link>
                     <Link
-                      to="/orders"
+                      to="/Velora/orders"
                       className="navbar-mobile-nav-item"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Orders
                     </Link>
                     <Link
-                      to="/settings"
+                      to="/Velora/settings"
                       className="navbar-mobile-nav-item"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Settings
                     </Link>
-                    <button
-                      className="navbar-mobile-logout-btn"
-                      onClick={handleLogout}
-                    >
+                    <button className="navbar-mobile-logout-btn" onClick={handleLogout}>
                       Logout
                     </button>
                   </>
                 ) : (
                   <Link
-                    to="/login"
+                    to="/Velora/login"
                     className="navbar-mobile-login-btn"
                     onClick={() => setIsMenuOpen(false)}
                   >
