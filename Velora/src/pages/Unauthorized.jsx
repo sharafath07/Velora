@@ -24,14 +24,14 @@ const Unauthorized = () => {
             </p>
             
             <div className="space-y-3">
-              <Link to="/" className="block">
+              <Link to="/Velora/" className="block">
                 <Button className="w-full">
                   <Home size={16} className="mr-2" />
                   Go to Homepage
                 </Button>
               </Link>
               
-              <Link to="/dashboard" className="block">
+              <Link to="/Velora/dashboard" className="block">
                 <Button variant="outline" className="w-full">
                   <ArrowLeft size={16} className="mr-2" />
                   Back to Dashboard

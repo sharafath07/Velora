@@ -7,14 +7,13 @@ import Button from '../components/Button';
 const Settings = () => {
   const { updatePassword } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [message, setMessage] = useState({ error: '', success: '' });
   const [showPasswords, setShowPasswords] = useState({
     current: false,
     new: false,
     confirm: false,
   });
-  
+
   const [passwordData, setPasswordData] = useState({
     currentPassword: '',
     newPassword: '',
@@ -27,61 +26,49 @@ const Settings = () => {
     sms: false,
   });
 
+  const resetMessages = () => setMessage({ error: '', success: '' });
+
   const handlePasswordChange = (e) => {
-    setPasswordData({
-      ...passwordData,
-      [e.target.name]: e.target.value,
-    });
-    setError('');
-    setSuccess('');
+    setPasswordData({ ...passwordData, [e.target.name]: e.target.value });
+    resetMessages();
   };
 
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
-    
     if (passwordData.newPassword !== passwordData.confirmPassword) {
-      setError('New passwords do not match');
+      setMessage({ error: 'New passwords do not match', success: '' });
       return;
     }
-
     if (passwordData.newPassword.length < 6) {
-      setError('New password must be at least 6 characters long');
+      setMessage({ error: 'New password must be at least 6 characters', success: '' });
       return;
     }
 
     setIsLoading(true);
-    setError('');
-    setSuccess('');
+    resetMessages();
 
     try {
       await updatePassword(passwordData.currentPassword, passwordData.newPassword);
-      setSuccess('Password updated successfully!');
-      setPasswordData({
-        currentPassword: '',
-        newPassword: '',
-        confirmPassword: '',
-      });
-    } catch (error) {
-      setError(error.message || 'Failed to update password');
+      setMessage({ error: '', success: 'Password updated successfully!' });
+      setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+    } catch (err) {
+      setMessage({ error: err.message || 'Failed to update password', success: '' });
     } finally {
       setIsLoading(false);
     }
   };
 
-  const togglePasswordVisibility = (field) => {
-  setShowPasswords((prev) => ({
-    ...prev,
-    [field]: !prev[field],
-  }));
-};
+  const togglePasswordVisibility = (field) =>
+    setShowPasswords((prev) => ({ ...prev, [field]: !prev[field] }));
 
-const handleNotificationChange = (type) => {
-  setNotifications((prev) => ({
-    ...prev,
-    [type]: !prev[type],
-  }));
-};
+  const handleNotificationChange = (type) =>
+    setNotifications((prev) => ({ ...prev, [type]: !prev[type] }));
 
+  const notificationTypes = [
+    { key: 'email', label: 'Email Notifications', desc: 'Receive notifications via email' },
+    { key: 'push', label: 'Push Notifications', desc: 'Receive push notifications in your browser' },
+    { key: 'sms', label: 'SMS Notifications', desc: 'Receive notifications via text message' },
+  ];
 
   return (
     <Layout>
@@ -94,108 +81,57 @@ const handleNotificationChange = (type) => {
               <h2 className="text-lg font-medium text-gray-900">Change Password</h2>
             </div>
 
-            {error && (
+            {message.error && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
-                {error}
+                {message.error}
               </div>
             )}
-
-            {success && (
+            {message.success && (
               <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded mb-4">
-                {success}
+                {message.success}
               </div>
             )}
 
             <form onSubmit={handlePasswordSubmit} className="space-y-4">
-              <div>
-                <label htmlFor="currentPassword" className="block text-sm font-medium text-gray-700">
-                  Current Password
-                </label>
-                <div className="mt-1 relative">
-                  <input
-                    type={showPasswords.current ? 'text' : 'password'}
-                    name="currentPassword"
-                    id="currentPassword"
-                    value={passwordData.currentPassword}
-                    onChange={handlePasswordChange}
-                    required
-                    className="block w-full pr-10 border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm"
-                  />
-                  <button
-                    type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                    onClick={() => togglePasswordVisibility('current')}
+              {['current', 'new', 'confirm'].map((field) => (
+                <div key={field}>
+                  <label
+                    htmlFor={`${field}Password`}
+                    className="block text-sm font-medium text-gray-700"
                   >
-                    {showPasswords.current ? (
-                      <EyeOff className="h-4 w-4 text-gray-400" />
-                    ) : (
-                      <Eye className="h-4 w-4 text-gray-400" />
-                    )}
-                  </button>
+                    {field === 'current'
+                      ? 'Current Password'
+                      : field === 'new'
+                      ? 'New Password'
+                      : 'Confirm New Password'}
+                  </label>
+                  <div className="mt-1 relative">
+                    <input
+                      type={showPasswords[field] ? 'text' : 'password'}
+                      name={`${field}Password`}
+                      id={`${field}Password`}
+                      value={passwordData[`${field}Password`]}
+                      onChange={handlePasswordChange}
+                      required
+                      className="block w-full pr-10 border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm"
+                    />
+                    <button
+                      type="button"
+                      className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                      onClick={() => togglePasswordVisibility(field)}
+                    >
+                      {showPasswords[field] ? (
+                        <EyeOff className="h-4 w-4 text-gray-400" />
+                      ) : (
+                        <Eye className="h-4 w-4 text-gray-400" />
+                      )}
+                    </button>
+                  </div>
                 </div>
-              </div>
-
-              <div>
-                <label htmlFor="newPassword" className="block text-sm font-medium text-gray-700">
-                  New Password
-                </label>
-                <div className="mt-1 relative">
-                  <input
-                    type={showPasswords.new ? 'text' : 'password'}
-                    name="newPassword"
-                    id="newPassword"
-                    value={passwordData.newPassword}
-                    onChange={handlePasswordChange}
-                    required
-                    className="block w-full pr-10 border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm"
-                  />
-                  <button
-                    type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                    onClick={() => togglePasswordVisibility('new')}
-                  >
-                    {showPasswords.new ? (
-                      <EyeOff className="h-4 w-4 text-gray-400" />
-                    ) : (
-                      <Eye className="h-4 w-4 text-gray-400" />
-                    )}
-                  </button>
-                </div>
-              </div>
-
-              <div>
-                <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
-                  Confirm New Password
-                </label>
-                <div className="mt-1 relative">
-                  <input
-                    type={showPasswords.confirm ? 'text' : 'password'}
-                    name="confirmPassword"
-                    id="confirmPassword"
-                    value={passwordData.confirmPassword}
-                    onChange={handlePasswordChange}
-                    required
-                    className="block w-full pr-10 border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm"
-                  />
-                  <button
-                    type="button"
-                    className="absolute inset-y-0 right-0 pr-3 flex items-center"
-                    onClick={() => togglePasswordVisibility('confirm')}
-                  >
-                    {showPasswords.confirm ? (
-                      <EyeOff className="h-4 w-4 text-gray-400" />
-                    ) : (
-                      <Eye className="h-4 w-4 text-gray-400" />
-                    )}
-                  </button>
-                </div>
-              </div>
+              ))}
 
               <div className="pt-4">
-                <Button
-                  type="submit"
-                  disabled={isLoading}
-                >
+                <Button type="submit" disabled={isLoading}>
                   {isLoading ? (
                     <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2" />
                   ) : (
@@ -217,65 +153,27 @@ const handleNotificationChange = (type) => {
             </div>
 
             <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-medium text-gray-900">Email Notifications</h3>
-                  <p className="text-sm text-gray-500">Receive notifications via email</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleNotificationChange('email')}
-                  className={`${
-                    notifications.email ? 'bg-primary' : 'bg-gray-200'
-                  } relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary`}
-                >
-                  <span
+              {notificationTypes.map((notif) => (
+                <div key={notif.key} className="flex items-center justify-between">
+                  <div>
+                    <h3 className="text-sm font-medium text-gray-900">{notif.label}</h3>
+                    <p className="text-sm text-gray-500">{notif.desc}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleNotificationChange(notif.key)}
                     className={`${
-                      notifications.email ? 'translate-x-5' : 'translate-x-0'
-                    } pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200`}
-                  />
-                </button>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-medium text-gray-900">Push Notifications</h3>
-                  <p className="text-sm text-gray-500">Receive push notifications in your browser</p>
+                      notifications[notif.key] ? 'bg-primary' : 'bg-gray-200'
+                    } relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary`}
+                  >
+                    <span
+                      className={`${
+                        notifications[notif.key] ? 'translate-x-5' : 'translate-x-0'
+                      } pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200`}
+                    />
+                  </button>
                 </div>
-                <button
-                  type="button"
-                  onClick={() => handleNotificationChange('push')}
-                  className={`${
-                    notifications.push ? 'bg-primary' : 'bg-gray-200'
-                  } relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary`}
-                >
-                  <span
-                    className={`${
-                      notifications.push ? 'translate-x-5' : 'translate-x-0'
-                    } pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200`}
-                  />
-                </button>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="text-sm font-medium text-gray-900">SMS Notifications</h3>
-                  <p className="text-sm text-gray-500">Receive notifications via text message</p>
-                </div>
-                <button
-                  type="button"
-                  onClick={() => handleNotificationChange('sms')}
-                  className={`${
-                    notifications.sms ? 'bg-primary' : 'bg-gray-200'
-                  } relative inline-flex flex-shrink-0 h-6 w-11 border-2 border-transparent rounded-full cursor-pointer transition-colors ease-in-out duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary`}
-                >
-                  <span
-                    className={`${
-                      notifications.sms ? 'translate-x-5' : 'translate-x-0'
-                    } pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition ease-in-out duration-200`}
-                  />
-                </button>
-              </div>
+              ))}
             </div>
           </div>
         </div>

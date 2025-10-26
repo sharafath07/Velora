@@ -3,19 +3,8 @@ import { TrendingUp, Users, UserCheck, Activity } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import Layout from '../components/Layout';
 
-// interface Analytics {
-//   overview: {
-//     totalUsers: number;
-//     activeUsers: number;
-//     adminUsers: number;
-//     regularUsers: number;
-//     recentRegistrations: number;
-//   };
-//   registrationTrend: { date: string; count: number }[];
-// }
-
 const AdminAnalytics = () => {
-  const { state } = useAuth();
+  const { user, token } = useAuth();
   const [analytics, setAnalytics] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -24,13 +13,15 @@ const AdminAnalytics = () => {
       try {
         const response = await fetch('http://localhost:5000/api/admin/analytics', {
           headers: {
-            'Authorization': `Bearer ${state.token}`,
+            Authorization: `Bearer ${token}`,
           },
         });
 
         if (response.ok) {
           const data = await response.json();
           setAnalytics(data.data);
+        } else {
+          console.error('Failed to fetch analytics');
         }
       } catch (error) {
         console.error('Error fetching analytics:', error);
@@ -39,8 +30,8 @@ const AdminAnalytics = () => {
       }
     };
 
-    fetchAnalytics();
-  }, [state.token]);
+    if (token) fetchAnalytics();
+  }, [token]);
 
   if (isLoading) {
     return (
@@ -51,6 +42,8 @@ const AdminAnalytics = () => {
       </Layout>
     );
   }
+
+  const overview = analytics?.overview || {};
 
   return (
     <Layout>
@@ -65,214 +58,127 @@ const AdminAnalytics = () => {
 
         {/* Stats Grid */}
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          <div className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <Users className="h-6 w-6 text-gray-400" />
-                </div>
+          {[
+            { label: 'Total Users', value: overview.totalUsers, icon: Users },
+            { label: 'Active Users', value: overview.activeUsers, icon: UserCheck },
+            { label: 'New Users (30d)', value: overview.recentRegistrations, icon: TrendingUp },
+            { label: 'Admin Users', value: overview.adminUsers, icon: Activity },
+          ].map(({ label, value, icon: Icon }, i) => (
+            <div key={i} className="bg-white overflow-hidden shadow rounded-lg">
+              <div className="p-5 flex items-center">
+                <Icon className="h-6 w-6 text-gray-400" />
                 <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">
-                      Total Users
-                    </dt>
-                    <dd className="text-lg font-medium text-gray-900">
-                      {analytics?.overview.totalUsers || 0}
-                    </dd>
-                  </dl>
+                  <dt className="text-sm font-medium text-gray-500 truncate">{label}</dt>
+                  <dd className="text-lg font-medium text-gray-900">{value || 0}</dd>
                 </div>
               </div>
             </div>
-          </div>
-
-          <div className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <UserCheck className="h-6 w-6 text-gray-400" />
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">
-                      Active Users
-                    </dt>
-                    <dd className="text-lg font-medium text-gray-900">
-                      {analytics?.overview.activeUsers || 0}
-                    </dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <TrendingUp className="h-6 w-6 text-gray-400" />
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">
-                      New Users (30d)
-                    </dt>
-                    <dd className="text-lg font-medium text-gray-900">
-                      {analytics?.overview.recentRegistrations || 0}
-                    </dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <div className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <Activity className="h-6 w-6 text-gray-400" />
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className="text-sm font-medium text-gray-500 truncate">
-                      Admin Users
-                    </dt>
-                    <dd className="text-lg font-medium text-gray-900">
-                      {analytics?.overview.adminUsers || 0}
-                    </dd>
-                  </dl>
-                </div>
-              </div>
-            </div>
-          </div>
+          ))}
         </div>
 
         {/* Registration Trend Chart */}
-        <div className="bg-white shadow rounded-lg">
-          <div className="px-4 py-5 sm:p-6">
-            <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
-              User Registration Trend (Last 7 Days)
-            </h3>
-            <div className="mt-4">
-              <div className="flex items-end space-x-2 h-32">
-                {analytics?.registrationTrend.map((day, index) => {
+        {analytics?.registrationTrend && (
+          <div className="bg-white shadow rounded-lg">
+            <div className="px-4 py-5 sm:p-6">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                User Registration Trend (Last 7 Days)
+              </h3>
+              <div className="mt-4 flex items-end space-x-2 h-32">
+                {analytics.registrationTrend.map((day, index) => {
                   const maxCount = Math.max(...analytics.registrationTrend.map(d => d.count));
                   const height = maxCount > 0 ? (day.count / maxCount) * 100 : 4;
-                  
                   return (
                     <div key={index} className="flex flex-col items-center flex-1">
                       <div
-                        className="bg-primary rounded-t w-full min-h-[4px] transition-all duration-300 hover:bg-primary-dark"
+                        className="bg-primary rounded-t w-full transition-all duration-300 hover:bg-primary-dark"
                         style={{ height: `${Math.max(height, 4)}%` }}
                         title={`${day.count} registrations`}
                       />
                       <div className="text-xs text-gray-500 mt-2">
                         {new Date(day.date).toLocaleDateString('en-US', { weekday: 'short' })}
                       </div>
-                      <div className="text-xs font-medium text-gray-900">
-                        {day.count}
-                      </div>
+                      <div className="text-xs font-medium text-gray-900">{day.count}</div>
                     </div>
                   );
                 })}
               </div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* User Distribution */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Role Distribution */}
           <div className="bg-white shadow rounded-lg">
             <div className="px-4 py-5 sm:p-6">
-              <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
                 User Role Distribution
               </h3>
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-700">Regular Users</span>
-                  <span className="text-sm text-gray-500">
-                    {analytics?.overview.regularUsers || 0}
-                  </span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    className="bg-blue-600 h-2 rounded-full"
-                    style={{
-                      width: `${
-                        analytics?.overview.totalUsers
-                          ? (analytics.overview.regularUsers / analytics.overview.totalUsers) * 100
-                          : 0
-                      }%`,
-                    }}
-                  />
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-700">Administrators</span>
-                  <span className="text-sm text-gray-500">
-                    {analytics?.overview.adminUsers || 0}
-                  </span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    className="bg-purple-600 h-2 rounded-full"
-                    style={{
-                      width: `${
-                        analytics?.overview.totalUsers
-                          ? (analytics.overview.adminUsers / analytics.overview.totalUsers) * 100
-                          : 0
-                      }%`,
-                    }}
-                  />
-                </div>
+                {[
+                  { label: 'Regular Users', value: overview.regularUsers, color: 'bg-blue-600' },
+                  { label: 'Administrators', value: overview.adminUsers, color: 'bg-purple-600' },
+                ].map(({ label, value, color }, i) => (
+                  <div key={i}>
+                    <div className="flex justify-between">
+                      <span className="text-sm font-medium text-gray-700">{label}</span>
+                      <span className="text-sm text-gray-500">{value || 0}</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className={`${color} h-2 rounded-full`}
+                        style={{
+                          width: `${
+                            overview.totalUsers
+                              ? (value / overview.totalUsers) * 100
+                              : 0
+                          }%`,
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>
 
+          {/* Account Status */}
           <div className="bg-white shadow rounded-lg">
             <div className="px-4 py-5 sm:p-6">
-              <h3 className="text-lg leading-6 font-medium text-gray-900 mb-4">
-                Account Status
-              </h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Account Status</h3>
               <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-700">Active Accounts</span>
-                  <span className="text-sm text-gray-500">
-                    {analytics?.overview.activeUsers || 0}
-                  </span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    className="bg-green-600 h-2 rounded-full"
-                    style={{
-                      width: `${
-                        analytics?.overview.totalUsers
-                          ? (analytics.overview.activeUsers / analytics.overview.totalUsers) * 100
-                          : 0
-                      }%`,
-                    }}
-                  />
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <span className="text-sm font-medium text-gray-700">Inactive Accounts</span>
-                  <span className="text-sm text-gray-500">
-                    {analytics?.overview.totalUsers && analytics?.overview.activeUsers
-                      ? analytics.overview.totalUsers - analytics.overview.activeUsers
-                      : 0}
-                  </span>
-                </div>
-                <div className="w-full bg-gray-200 rounded-full h-2">
-                  <div
-                    className="bg-red-600 h-2 rounded-full"
-                    style={{
-                      width: `${
-                        analytics?.overview.totalUsers
-                          ? ((analytics.overview.totalUsers - analytics.overview.activeUsers) / analytics.overview.totalUsers) * 100
-                          : 0
-                      }%`,
-                    }}
-                  />
-                </div>
+                {[
+                  {
+                    label: 'Active Accounts',
+                    value: overview.activeUsers,
+                    color: 'bg-green-600',
+                  },
+                  {
+                    label: 'Inactive Accounts',
+                    value:
+                      (overview.totalUsers || 0) - (overview.activeUsers || 0),
+                    color: 'bg-red-600',
+                  },
+                ].map(({ label, value, color }, i) => (
+                  <div key={i}>
+                    <div className="flex justify-between">
+                      <span className="text-sm font-medium text-gray-700">{label}</span>
+                      <span className="text-sm text-gray-500">{value || 0}</span>
+                    </div>
+                    <div className="w-full bg-gray-200 rounded-full h-2">
+                      <div
+                        className={`${color} h-2 rounded-full`}
+                        style={{
+                          width: `${
+                            overview.totalUsers
+                              ? (value / overview.totalUsers) * 100
+                              : 0
+                          }%`,
+                        }}
+                      />
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
           </div>

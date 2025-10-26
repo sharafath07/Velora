@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Activity, Calendar, Clock, Filter } from 'lucide-react';
+import { Activity, Clock, Filter } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import Layout from '../components/Layout';
 
