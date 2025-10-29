@@ -1,0 +1,264 @@
+/* About Page Styles */
+.about-container {
+  min-height: 100vh;
+  background-color: white;
+}
+
+.about-hero {
+  position: relative;
+  height: 24rem;
+  background: linear-gradient(to right, var(--primary-light), var(--primary));
+  overflow: hidden;
+}
+
+.about-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background-color: rgba(0, 0, 0, 0.2);
+}
+
+.about-hero-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  opacity: 0.6;
+}
+
+.about-hero-content {
+  position: relative;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 1rem;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.about-hero-text {
+  color: white;
+  animation: fadeIn 0.8s ease-in-out;
+}
+
+.about-hero-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 3rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+.about-hero-subtitle {
+  font-size: 1.25rem;
+  max-width: 32rem;
+  line-height: 1.6;
+}
+
+.about-content {
+  padding: 4rem 0;
+}
+
+.about-content-container {
+  max-width: 64rem;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+.about-section {
+  margin-bottom: 3rem;
+}
+
+.about-section-header {
+  text-align: center;
+  margin-bottom: 3rem;
+  animation: slideUp 0.6s ease-out;
+}
+
+.about-section-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 1.5rem;
+}
+
+.about-section-description {
+  font-size: 1.25rem;
+  color: #4b5563;
+  line-height: 1.7;
+}
+
+.about-journey {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+  margin-bottom: 3rem;
+}
+
+.about-journey-image {
+  animation: slideUp 0.6s ease-out;
+}
+
+.about-journey-img {
+  width: 100%;
+  height: 16rem;
+  object-fit: cover;
+  border-radius: 0.5rem;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.about-journey-text {
+  animation: slideUp 0.6s ease-out;
+}
+
+.about-journey-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 1rem;
+}
+
+.about-journey-paragraph {
+  color: #4b5563;
+  line-height: 1.7;
+  margin-bottom: 1rem;
+}
+
+.about-values {
+  text-align: center;
+  margin-bottom: 3rem;
+  animation: slideUp 0.6s ease-out;
+}
+
+.about-values-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 2rem;
+}
+
+.about-values-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+.about-value-item {
+  text-align: center;
+}
+
+.about-value-icon {
+  background-color: var(--primary-light);
+  border-radius: 50%;
+  padding: 1rem;
+  width: 4rem;
+  height: 4rem;
+  margin: 0 auto 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.about-value-icon svg {
+  color: var(--primary);
+}
+
+.about-value-title {
+  font-weight: 600;
+  font-size: 1.125rem;
+  margin-bottom: 0.5rem;
+  color: #111827;
+}
+
+.about-value-description {
+  color: #4b5563;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.about-promise {
+  background-color: var(--gray-50);
+  border-radius: 0.5rem;
+  padding: 2rem;
+  margin-bottom: 3rem;
+  animation: slideUp 0.6s ease-out;
+}
+
+.about-promise-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.about-promise-content {
+  text-align: center;
+  max-width: 48rem;
+  margin: 0 auto;
+}
+
+.about-promise-paragraph {
+  font-size: 1.125rem;
+  color: #4b5563;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+
+.about-cta {
+  text-align: center;
+  animation: slideUp 0.6s ease-out;
+}
+
+.about-cta-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #111827;
+  margin-bottom: 1.5rem;
+}
+
+.about-cta-description {
+  font-size: 1.125rem;
+  color: #4b5563;
+  line-height: 1.7;
+  max-width: 48rem;
+  margin: 0 auto;
+}
+
+@media (min-width: 640px) {
+  .about-content-container {
+    padding: 0 1.5rem;
+  }
+  
+  .about-values-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 768px) {
+  .about-journey {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .about-values-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .about-content-container {
+    padding: 0 2rem;
+  }
+  
+  .about-values-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+  
+  .about-hero-title {
+    font-size: 4rem;
+  }
+}
