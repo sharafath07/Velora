@@ -32,16 +32,23 @@ const orderSchema = new mongoose.Schema({
     city: { type: String, required: true },
     state: { type: String, required: true },
     zipCode: { type: String, required: true },
-    country: { type: String, required: true }
+    country: { type: String, required: true, default: 'India' },
+    phone: String
   },
   paymentMethod: {
     type: String,
     required: true,
-    enum: ['cash', 'card', 'upi', 'netbanking']
+    enum: ['cash', 'card', 'upi', 'netbanking', 'wallet']
+  },
+  paymentResult: {
+    id: String,
+    status: String,
+    update_time: String,
+    email_address: String
   },
   paymentStatus: {
     type: String,
-    enum: ['pending', 'paid', 'failed'],
+    enum: ['pending', 'paid', 'failed', 'refunded'],
     default: 'pending'
   },
   itemsPrice: {
@@ -66,14 +73,27 @@ const orderSchema = new mongoose.Schema({
   },
   orderStatus: {
     type: String,
-    enum: ['pending', 'processing', 'shipped', 'delivered', 'cancelled'],
+    enum: ['pending', 'confirmed', 'processing', 'shipped', 'delivered', 'cancelled'],
     default: 'pending'
   },
+  orderNotes: String,
+  paidAt: Date,
   deliveredAt: Date,
+  cancelledAt: Date,
   createdAt: {
     type: Date,
     default: Date.now
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now
   }
+});
+
+// Update timestamp on save
+orderSchema.pre('save', function(next) {
+  this.updatedAt = Date.now();
+  next();
 });
 
 module.exports = mongoose.model('Order', orderSchema);

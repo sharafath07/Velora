@@ -5,19 +5,21 @@ const userSchema = new mongoose.Schema({
   name: {
     type: String,
     required: [true, 'Please provide a name'],
-    trim: true
+    trim: true,
+    maxlength: [50, 'Name cannot exceed 50 characters']
   },
   email: {
     type: String,
     required: [true, 'Please provide an email'],
     unique: true,
     lowercase: true,
+    trim: true,
     match: [/^\S+@\S+\.\S+$/, 'Please provide a valid email']
   },
   password: {
     type: String,
     required: [true, 'Please provide a password'],
-    minlength: 6,
+    minlength: [6, 'Password must be at least 6 characters'],
     select: false // Don't return password by default
   },
   role: {
@@ -34,12 +36,26 @@ const userSchema = new mongoose.Schema({
     city: String,
     state: String,
     zipCode: String,
-    country: String
+    country: { type: String, default: 'India' }
+  },
+  isActive: {
+    type: Boolean,
+    default: true
   },
   createdAt: {
     type: Date,
     default: Date.now
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now
   }
+});
+
+// Update timestamp on save
+userSchema.pre('save', function(next) {
+  this.updatedAt = Date.now();
+  next();
 });
 
 // Hash password before saving
