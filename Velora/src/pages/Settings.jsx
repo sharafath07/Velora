@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { Lock, Bell, Shield, Eye, EyeOff } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
+import axios from 'axios';
 import Layout from '../components/Layout';
 import Button from '../components/Button';
 
+const API_BASE_URL = 'https://velora-dm0l.onrender.com/api';
+
 const Settings = () => {
-  const { updatePassword } = useAuth();
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState({ error: '', success: '' });
   const [showPasswords, setShowPasswords] = useState({
@@ -26,13 +27,16 @@ const Settings = () => {
     sms: false,
   });
 
+  // Helper: reset messages
   const resetMessages = () => setMessage({ error: '', success: '' });
 
+  // Handle input change
   const handlePasswordChange = (e) => {
     setPasswordData({ ...passwordData, [e.target.name]: e.target.value });
     resetMessages();
   };
 
+  // Handle password update via backend
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
     if (passwordData.newPassword !== passwordData.confirmPassword) {
@@ -48,11 +52,38 @@ const Settings = () => {
     resetMessages();
 
     try {
-      await updatePassword(passwordData.currentPassword, passwordData.newPassword);
-      setMessage({ error: '', success: 'Password updated successfully!' });
-      setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setMessage({ error: 'You must be logged in to change your password.', success: '' });
+        setIsLoading(false);
+        return;
+      }
+
+      // ✅ Send request to backend
+      const res = await axios.put(
+        `${API_BASE_URL}/auth/update-password`,
+        {
+          currentPassword: passwordData.currentPassword,
+          newPassword: passwordData.newPassword,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (res.data?.success) {
+        setMessage({ error: '', success: 'Password updated successfully!' });
+        setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+      } else {
+        setMessage({ error: res.data?.message || 'Password update failed.', success: '' });
+      }
     } catch (err) {
-      setMessage({ error: err.message || 'Failed to update password', success: '' });
+      setMessage({
+        error: err.response?.data?.message || 'Failed to update password',
+        success: '',
+      });
     } finally {
       setIsLoading(false);
     }
@@ -73,7 +104,7 @@ const Settings = () => {
   return (
     <Layout>
       <div className="max-w-4xl mx-auto space-y-6">
-        {/* Password Settings */}
+        {/* 🔐 Password Settings */}
         <div className="bg-white shadow rounded-lg">
           <div className="px-4 py-5 sm:p-6">
             <div className="flex items-center mb-6">
@@ -144,7 +175,7 @@ const Settings = () => {
           </div>
         </div>
 
-        {/* Notification Settings */}
+        {/* 🔔 Notification Settings */}
         <div className="bg-white shadow rounded-lg">
           <div className="px-4 py-5 sm:p-6">
             <div className="flex items-center mb-6">
@@ -178,7 +209,7 @@ const Settings = () => {
           </div>
         </div>
 
-        {/* Security Settings */}
+        {/* 🛡 Security Settings */}
         <div className="bg-white shadow rounded-lg">
           <div className="px-4 py-5 sm:p-6">
             <div className="flex items-center mb-6">
@@ -212,7 +243,11 @@ const Settings = () => {
                 <p className="text-sm text-gray-500 mb-3">
                   Permanently delete your account and all associated data
                 </p>
-                <Button variant="outline" size="sm" className="text-red-600 border-red-300 hover:bg-red-50">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-red-600 border-red-300 hover:bg-red-50"
+                >
                   Delete Account
                 </Button>
               </div>

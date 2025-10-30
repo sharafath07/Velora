@@ -1,5 +1,4 @@
 import React from 'react';
-import { Video as LucideIcon } from 'lucide-react';
 
 const Button = ({
   variant = 'primary',
@@ -12,13 +11,11 @@ const Button = ({
   type = 'button',
 }) => {
   const buttonClasses = [
-    'btn',                // base button
-    `btn-${variant}`,     // variant style (primary, secondary, etc.)
-    `btn-${size}`,        // size style (sm, md, lg)
-    className             // any extra custom classes
-  ]
-    .filter(Boolean)
-    .join(' ');
+    'btn',                 // base
+    `btn-${variant}`,      // primary / outline / danger / etc.
+    `btn-${size}`,         // sm / md / lg
+    className
+  ].filter(Boolean).join(' ');
 
   return (
     <button
@@ -29,7 +26,7 @@ const Button = ({
     >
       {Icon && (
         <Icon
-          size={size === 'sm' ? 16 : size === 'lg' ? 20 : 18}
+          size={size === 'sm' ? 16 : size === 'lg' ? 22 : 18}
           className="btn-icon"
         />
       )}

@@ -1,87 +1,97 @@
 import { useState, useEffect, createContext, useContext } from "react";
-import { account } from "../lib/appwriteConfig"; // make sure this is configured correctly
-import { ID } from "appwrite";
+import axios from "axios";
 import LoadingSpinner from "../components/LoadingSpinner";
 
+const API_BASE_URL = "https://velora-dm0l.onrender.com/api";
 const AuthContext = createContext(undefined);
 
 export const AuthProvider = ({ children }) => {
-  const [loading, setLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
   const [user, setUser] = useState(null);
 
-  // On mount, check if the user is already logged in
+  // ✅ Automatically check auth state on mount
   useEffect(() => {
     checkUserStatus();
   }, []);
 
-  // LOGIN FUNCTION
+  // ✅ LOGIN
   const loginUser = async (email, password) => {
-    setLoading(true);
+    setIsLoading(true);
     try {
-      // v21 syntax for email/password login
-      await account.createEmailPasswordSession(email, password);
-
-      // Get current user details
-      const accountDetails = await account.get();
-      setUser(accountDetails);
-    } catch (error) {
-      console.error("Login error:", error);
-      setUser(null);
-    }
-    setLoading(false);
-  };
-
-  // LOGOUT FUNCTION
-  const logoutUser = async () => {
-    setLoading(true);
-    try {
-      await account.deleteSession({ sessionId: "current" });
-      setUser(null);
-    } catch (error) {
-      console.error("Logout error:", error);
-    }
-    setLoading(false);
-  };
-
-  // REGISTER FUNCTION
-  const registerUser = async ({ name, email, password1 }) => {
-    setLoading(true);
-    try {
-      // Create new user
-      await account.create({
-        userId: ID.unique(),
+      const { data } = await axios.post(`${API_BASE_URL}/auth/login`, {
         email,
-        password: password1,
-        name,
+        password,
       });
 
-      // Automatically log in after registration
-      await account.createEmailSession(email, password1);
-
-      const accountDetails = await account.get();
-      setUser(accountDetails);
+      const { token, user } = data;
+      localStorage.setItem("authToken", token);
+      setUser(user);
     } catch (error) {
-      console.error("Registration error:", error);
+      console.error("Login error:", error.response?.data || error.message);
+      alert(error.response?.data?.message || "Login failed. Please try again.");
       setUser(null);
+    } finally {
+      setIsLoading(false);
     }
-    setLoading(false);
   };
 
-  // CHECK CURRENT USER SESSION
-  const checkUserStatus = async () => {
-    setLoading(true);
+  // ✅ REGISTER
+  const registerUser = async ({ name, email, password }) => {
+    setIsLoading(true);
     try {
-      const accountDetails = await account.get();
-      setUser(accountDetails);
+      const { data } = await axios.post(`${API_BASE_URL}/auth/register`, {
+        name,
+        email,
+        password,
+      });
+
+      const { token, user } = data;
+      localStorage.setItem("authToken", token);
+      setUser(user);
     } catch (error) {
-      // No active session, user not logged in
+      console.error("Registration error:", error.response?.data || error.message);
+      alert(error.response?.data?.message || "Registration failed.");
       setUser(null);
+    } finally {
+      setIsLoading(false);
     }
-    setLoading(false);
   };
 
+  // ✅ LOGOUT
+  const logoutUser = () => {
+    localStorage.removeItem("authToken");
+    setUser(null);
+  };
+
+  // ✅ CHECK USER STATUS (auth persistence)
+  const checkUserStatus = async () => {
+    const token = localStorage.getItem("authToken");
+    if (!token) {
+      setUser(null);
+      setIsLoading(false);
+      return;
+    }
+
+    try {
+      const { data } = await axios.get(`${API_BASE_URL}/auth/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setUser(data.user);
+    } catch (error) {
+      console.error("Session check failed:", error.response?.data || error.message);
+      localStorage.removeItem("authToken");
+      setUser(null);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  // Context data shared across app
   const contextData = {
     user,
+    isLoading,
     loginUser,
     logoutUser,
     registerUser,
@@ -90,11 +100,22 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider value={contextData}>
-      {loading ? <LoadingSpinner /> : children}
+      {isLoading ? (
+        <div className="min-h-screen flex items-center justify-center">
+          <LoadingSpinner size="lg" />
+        </div>
+      ) : (
+        children
+      )}
     </AuthContext.Provider>
   );
 };
 
-export const useAuth = () => useContext(AuthContext);
+// ✅ Custom hook for consuming auth context
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) throw new Error("useAuth must be used within an AuthProvider");
+  return context;
+};
 
 export default AuthContext;

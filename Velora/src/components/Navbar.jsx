@@ -43,7 +43,6 @@ const Navbar = () => {
     navigate('/Velora/');
   };
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (userMenuRef.current && !userMenuRef.current.contains(event.target)) {
@@ -55,17 +54,14 @@ const Navbar = () => {
   }, []);
 
   return (
-    <nav className="navbar">
+    <nav className="navbar shadow-sm">
       <div className="navbar-container">
-        {/* --- Main Navbar Content --- */}
         <div className="navbar-content">
-          {/* Logo */}
           <Link to="/Velora/" className="navbar-logo">
             <img src={logo} alt="Velora" width={50} height={50} />
             <span>Velora</span>
           </Link>
 
-          {/* Desktop Navigation */}
           <div className="navbar-nav md:flex">
             {navItems.map((item) => (
               <Link
@@ -78,13 +74,11 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* Right Side Icons */}
           <div className="navbar-actions md:flex">
             <button className="navbar-icon-btn">
               <Search size={20} />
             </button>
 
-            {/* User Menu / Auth */}
             {user ? (
               <div className="navbar-user-menu" ref={userMenuRef}>
                 <button
@@ -92,65 +86,33 @@ const Navbar = () => {
                   onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                 >
                   <User size={20} />
-                  <ChevronDown
-                    size={16}
-                    className={`navbar-user-chevron ${isUserMenuOpen ? 'open' : ''}`}
-                  />
+                  <ChevronDown size={16} className={`navbar-user-chevron ${isUserMenuOpen ? 'open' : ''}`} />
                 </button>
 
                 {isUserMenuOpen && (
                   <div className="navbar-dropdown">
                     <div className="navbar-dropdown-header">
                       <div className="navbar-dropdown-avatar">
-                        {user.name
-                          ? user.name
-                              .split(' ')
-                              .map((n) => n[0])
-                              .join('')
-                              .toUpperCase()
-                          : 'U'}
+                        {user.name ? user.name.charAt(0).toUpperCase() : 'U'}
                       </div>
                       <div className="navbar-dropdown-user-info">
-                        <p className="navbar-dropdown-name">{user.name || 'User'}</p>
-                        <p className="navbar-dropdown-email">{user.email || ''}</p>
+                        <p className="navbar-dropdown-name">{user.name}</p>
+                        <p className="navbar-dropdown-email">{user.email}</p>
                       </div>
                     </div>
 
-                    <div className="navbar-dropdown-divider"></div>
-
-                    <Link
-                      to="/Velora/profile"
-                      className="navbar-dropdown-item"
-                      onClick={() => setIsUserMenuOpen(false)}
-                    >
+                    <Link to="/Velora/profile" className="navbar-dropdown-item">
                       <User size={16} /> Profile
                     </Link>
-
-                    <Link
-                      to="/Velora/dashboard"
-                      className="navbar-dropdown-item"
-                      onClick={() => setIsUserMenuOpen(false)}
-                    >
+                    <Link to="/Velora/dashboard" className="navbar-dropdown-item">
                       <LayoutDashboard size={16} /> Dashboard
                     </Link>
-
-                    <Link
-                      to="/Velora/orders"
-                      className="navbar-dropdown-item"
-                      onClick={() => setIsUserMenuOpen(false)}
-                    >
+                    <Link to="/Velora/orders" className="navbar-dropdown-item">
                       <Package size={16} /> Orders
                     </Link>
-
-                    <Link
-                      to="/Velora/settings"
-                      className="navbar-dropdown-item"
-                      onClick={() => setIsUserMenuOpen(false)}
-                    >
+                    <Link to="/Velora/settings" className="navbar-dropdown-item">
                       <SettingsIcon size={16} /> Settings
                     </Link>
-
-                    <div className="navbar-dropdown-divider"></div>
 
                     <button className="navbar-dropdown-item logout" onClick={handleLogout}>
                       <LogOut size={16} /> Logout
@@ -164,89 +126,50 @@ const Navbar = () => {
               </Link>
             )}
 
-            {/* Cart Icon */}
             <Link to="/Velora/cart" className="navbar-cart-btn">
               <ShoppingBag size={20} />
               {cartItemsCount > 0 && <span className="navbar-cart-badge">{cartItemsCount}</span>}
             </Link>
           </div>
 
-          {/* Mobile Menu Button */}
+          {/* Mobile menu toggle */}
           <div className="navbar-mobile md:hidden">
             <Link to="/Velora/cart" className="navbar-cart-btn">
               <ShoppingBag size={20} />
               {cartItemsCount > 0 && <span className="navbar-cart-badge">{cartItemsCount}</span>}
             </Link>
-            <button
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="navbar-mobile-menu-btn"
-            >
+            <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="navbar-mobile-menu-btn">
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
             </button>
           </div>
         </div>
 
-        {/* Mobile Menu */}
         {isMenuOpen && (
           <div className="navbar-mobile-menu md:hidden">
-            <div className="navbar-mobile-nav">
-              {navItems.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.path}
-                  onClick={() => setIsMenuOpen(false)}
-                  className={`navbar-mobile-nav-item ${isActiveLink(item.path) ? 'active' : ''}`}
-                >
-                  {item.name}
-                </Link>
-              ))}
+            {navItems.map((item) => (
+              <Link
+                key={item.name}
+                to={item.path}
+                onClick={() => setIsMenuOpen(false)}
+                className={`navbar-mobile-nav-item ${isActiveLink(item.path) ? 'active' : ''}`}
+              >
+                {item.name}
+              </Link>
+            ))}
 
-              <div className="navbar-mobile-actions">
-                {user ? (
-                  <>
-                    <Link
-                      to="/Velora/profile"
-                      className="navbar-mobile-nav-item"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Profile
-                    </Link>
-                    <Link
-                      to="/Velora/dashboard"
-                      className="navbar-mobile-nav-item"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Dashboard
-                    </Link>
-                    <Link
-                      to="/Velora/orders"
-                      className="navbar-mobile-nav-item"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Orders
-                    </Link>
-                    <Link
-                      to="/Velora/settings"
-                      className="navbar-mobile-nav-item"
-                      onClick={() => setIsMenuOpen(false)}
-                    >
-                      Settings
-                    </Link>
-                    <button className="navbar-mobile-logout-btn" onClick={handleLogout}>
-                      Logout
-                    </button>
-                  </>
-                ) : (
-                  <Link
-                    to="/Velora/login"
-                    className="navbar-mobile-login-btn"
-                    onClick={() => setIsMenuOpen(false)}
-                  >
-                    Login / Signup
-                  </Link>
-                )}
-              </div>
-            </div>
+            {user ? (
+              <>
+                <Link to="/Velora/profile" className="navbar-mobile-nav-item">Profile</Link>
+                <Link to="/Velora/dashboard" className="navbar-mobile-nav-item">Dashboard</Link>
+                <Link to="/Velora/orders" className="navbar-mobile-nav-item">Orders</Link>
+                <Link to="/Velora/settings" className="navbar-mobile-nav-item">Settings</Link>
+                <button className="navbar-mobile-logout-btn" onClick={handleLogout}>Logout</button>
+              </>
+            ) : (
+              <Link to="/Velora/login" className="navbar-mobile-login-btn" onClick={() => setIsMenuOpen(false)}>
+                Login / Signup
+              </Link>
+            )}
           </div>
         )}
       </div>

@@ -13,13 +13,18 @@ const Dashboard = () => {
 
     const fetchStats = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/users/stats', {
-          headers: { Authorization: `Bearer ${token}` },
-        });
+        const response = await fetch(
+          'https://velora-dm0l.onrender.com/api/users/stats',
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
         if (response.ok) {
           const data = await response.json();
           setStats(data.data);
+        } else {
+          console.error('Failed to fetch stats:', response.statusText);
         }
       } catch (error) {
         console.error('Error fetching stats:', error);
@@ -135,7 +140,7 @@ const Dashboard = () => {
             {stats?.recentActivities?.length ? (
               <ul className="-mb-8">
                 {stats.recentActivities.map((activity, index) => (
-                  <li key={activity.id}>
+                  <li key={activity.id || index}>
                     <div className="relative pb-8">
                       {index !== stats.recentActivities.length - 1 && (
                         <span

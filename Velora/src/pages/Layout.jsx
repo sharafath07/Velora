@@ -14,17 +14,20 @@ import {
 import { useAuth } from '../contexts/AuthContext';
 
 const Layout = ({ children }) => {
-  const { user, logout } = useAuth();
+  const { user, logoutUser } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const handleLogout = async () => {
-    await logout();
+    await logoutUser();
     navigate('/Velora/login');
   };
 
+  // Adjust these field names to match your backend's response
   const isAdmin = user?.role === 'admin';
+  const firstName = user?.firstName || user?.name?.split(' ')[0] || 'User';
+  const lastName = user?.lastName || user?.name?.split(' ')[1] || '';
 
   const navigation = isAdmin
     ? [
@@ -43,7 +46,7 @@ const Layout = ({ children }) => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      {/* Mobile Sidebar */}
+      {/* ===== MOBILE SIDEBAR ===== */}
       {sidebarOpen && (
         <div className="fixed inset-0 z-50 lg:hidden">
           <div
@@ -86,13 +89,13 @@ const Layout = ({ children }) => {
               <div className="flex items-center">
                 <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
                   <span className="text-sm font-medium text-white">
-                    {user?.firstName?.[0]}
-                    {user?.lastName?.[0]}
+                    {firstName[0]}
+                    {lastName[0]}
                   </span>
                 </div>
                 <div className="ml-3">
                   <p className="text-sm font-medium text-gray-700">
-                    {user?.firstName} {user?.lastName}
+                    {firstName} {lastName}
                   </p>
                   <p className="text-xs text-gray-500">{user?.email}</p>
                 </div>
@@ -109,7 +112,7 @@ const Layout = ({ children }) => {
         </div>
       )}
 
-      {/* Desktop Sidebar */}
+      {/* ===== DESKTOP SIDEBAR ===== */}
       <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
         <div className="flex flex-col flex-grow bg-white border-r border-gray-200">
           <div className="flex h-16 items-center px-4">
@@ -140,13 +143,13 @@ const Layout = ({ children }) => {
             <div className="flex items-center">
               <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
                 <span className="text-sm font-medium text-white">
-                  {user?.firstName?.[0]}
-                  {user?.lastName?.[0]}
+                  {firstName[0]}
+                  {lastName[0]}
                 </span>
               </div>
               <div className="ml-3">
                 <p className="text-sm font-medium text-gray-700">
-                  {user?.firstName} {user?.lastName}
+                  {firstName} {lastName}
                 </p>
                 <p className="text-xs text-gray-500">{user?.email}</p>
               </div>
@@ -162,7 +165,7 @@ const Layout = ({ children }) => {
         </div>
       </div>
 
-      {/* Main Content */}
+      {/* ===== MAIN CONTENT ===== */}
       <div className="lg:pl-64">
         {/* Top Bar */}
         <div className="sticky top-0 z-40 flex h-16 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:px-6 lg:px-8">
@@ -176,12 +179,12 @@ const Layout = ({ children }) => {
 
           <div className="flex flex-1 justify-end items-center gap-x-4">
             <span className="text-sm font-medium text-gray-700">
-              Welcome, {user?.firstName}!
+              Welcome, {firstName}!
             </span>
             <div className="h-8 w-8 rounded-full bg-primary flex items-center justify-center">
               <span className="text-sm font-medium text-white">
-                {user?.firstName?.[0]}
-                {user?.lastName?.[0]}
+                {firstName[0]}
+                {lastName[0]}
               </span>
             </div>
           </div>
