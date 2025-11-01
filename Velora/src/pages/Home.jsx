@@ -22,7 +22,7 @@ const Home = () => {
             Experience timeless elegance and modern sophistication with Velora.
           </p>
           <Link
-            to="/Velora/shop"
+            to="/shop"
             className="home-hero-cta inline-flex items-center justify-center gap-2 text-white font-medium px-8 py-3 rounded-full"
           >
             Shop Now <ArrowRight size={18} />
@@ -65,7 +65,7 @@ const Home = () => {
           </div>
 
           <div className="text-center home-featured-cta">
-            <Link to="/Velora/shop">
+            <Link to="/shop">
               <Button variant="outline" size="lg">
                 View All Products
               </Button>
@@ -95,7 +95,7 @@ const Home = () => {
             ].map((category) => (
               <Link
                 key={category.name}
-                to={`/Velora/shop?category=${category.name}`}
+                to={`/shop?category=${category.name}`}
                 className="group relative overflow-hidden rounded-lg aspect-square home-category-item"
               >
                 <img
@@ -130,7 +130,7 @@ const Home = () => {
                 meticulous attention to detail, ensuring that every woman feels extraordinary
                 in her Velora ensemble.
               </p>
-              <Link to="/Velora/about">
+              <Link to="/about">
                 <Button variant="outline">
                   Learn More About Us
                 </Button>

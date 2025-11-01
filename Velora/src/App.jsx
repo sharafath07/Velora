@@ -32,11 +32,11 @@ function App() {
           <div className="min-h-screen flex flex-col">
             <Routes>
               {/* Public Routes */}
-              <Route path="/Velora/login" element={<Login />} />
-              <Route path="/Velora/unauthorized" element={<Unauthorized />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/unauthorized" element={<Unauthorized />} />
               
               {/* Public Routes with Navbar/Footer */}
-              <Route path="/Velora" element={
+              <Route path="/" element={
                 <div className="min-h-screen flex flex-col">
                   <Navbar />
                   <main className="flex-1">
@@ -45,7 +45,7 @@ function App() {
                   <Footer />
                 </div>
               } />
-              <Route path="/Velora/shop" element={
+              <Route path="/shop" element={
                 <div className="min-h-screen flex flex-col">
                   <Navbar />
                   <main className="flex-1">
@@ -54,7 +54,7 @@ function App() {
                   <Footer />
                 </div>
               } />
-              <Route path="/Velora/product/:id" element={
+              <Route path="/product/:id" element={
                 <div className="min-h-screen flex flex-col">
                   <Navbar />
                   <main className="flex-1">
@@ -63,7 +63,7 @@ function App() {
                   <Footer />
                 </div>
               } />
-              <Route path="/Velora/cart" element={
+              <Route path="/cart" element={
                 <div className="min-h-screen flex flex-col">
                   <Navbar />
                   <main className="flex-1">
@@ -72,7 +72,7 @@ function App() {
                   <Footer />
                 </div>
               } />
-              <Route path="/Velora/about" element={
+              <Route path="/about" element={
                 <div className="min-h-screen flex flex-col">
                   <Navbar />
                   <main className="flex-1">
@@ -81,7 +81,7 @@ function App() {
                   <Footer />
                 </div>
               } />
-              <Route path="/Velora/contact" element={
+              <Route path="/contact" element={
                 <div className="min-h-screen flex flex-col">
                   <Navbar />
                   <main className="flex-1">
@@ -92,54 +92,54 @@ function App() {
               } />
 
               {/* Protected User Routes */}
-              <Route path="/Velora/dashboard" element={
+              <Route path="/dashboard" element={
                 <ProtectedRoute>
                   <Dashboard />
                 </ProtectedRoute>
               } />
-              <Route path="/Velora/profile" element={
+              <Route path="/profile" element={
                 <ProtectedRoute>
                   <Profile />
                 </ProtectedRoute>
               } />
-              <Route path="/Velora/activities" element={
+              <Route path="/activities" element={
                 <ProtectedRoute>
                   <Activities />
                 </ProtectedRoute>
               } />
-              <Route path="/Velora/settings" element={
+              <Route path="/settings" element={
                 <ProtectedRoute>
                   <Settings />
                 </ProtectedRoute>
               } />
-              <Route path="/Velora/orders" element={
+              <Route path="/orders" element={
                 <ProtectedRoute>
                   <Orders />
                 </ProtectedRoute>
               } />
 
               {/* Protected Admin Routes */}
-              <Route path="/Velora/admin/dashboard" element={
+              <Route path="/admin/dashboard" element={
                 <ProtectedRoute requiredRole="admin">
                   <AdminDashboard />
                 </ProtectedRoute>
               } />
-              <Route path="/Velora/admin/users" element={
+              <Route path="/admin/users" element={
                 <ProtectedRoute requiredRole="admin">
                   <AdminUsers />
                 </ProtectedRoute>
               } />
-              <Route path="/Velora/admin/analytics" element={
+              <Route path="/admin/analytics" element={
                 <ProtectedRoute requiredRole="admin">
                   <AdminAnalytics />
                 </ProtectedRoute>
               } />
-              <Route path="/Velora/admin/activities" element={
+              <Route path="/admin/activities" element={
                 <ProtectedRoute requiredRole="admin">
                   <AdminActivities />
                 </ProtectedRoute>
               } />
-              <Route path="/Velora/admin/settings" element={
+              <Route path="/admin/settings" element={
                 <ProtectedRoute requiredRole="admin">
                   <AdminSettings />
                 </ProtectedRoute>

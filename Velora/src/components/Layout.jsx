@@ -18,17 +18,17 @@ const Layout = ({ children }) => {
 
   const navigation = isAdmin
     ? [
-        { name: 'Dashboard', href: '/Velora/admin/dashboard', icon: Home },
-        { name: 'Users', href: '/Velora/admin/users', icon: Users },
-        { name: 'Analytics', href: '/Velora/admin/analytics', icon: BarChart3 },
-        { name: 'Activities', href: '/Velora/admin/activities', icon: Activity },
-        { name: 'Settings', href: '/Velora/admin/settings', icon: Settings },
+        { name: 'Dashboard', href: '/admin/dashboard', icon: Home },
+        { name: 'Users', href: '/admin/users', icon: Users },
+        { name: 'Analytics', href: '/admin/analytics', icon: BarChart3 },
+        { name: 'Activities', href: '/admin/activities', icon: Activity },
+        { name: 'Settings', href: '/admin/settings', icon: Settings },
       ]
     : [
-        { name: 'Dashboard', href: '/Velora/dashboard', icon: Home },
-        { name: 'Profile', href: '/Velora/profile', icon: User },
-        { name: 'Activities', href: '/Velora/activities', icon: Activity },
-        { name: 'Settings', href: '/Velora/settings', icon: Settings },
+        { name: 'Dashboard', href: '/dashboard', icon: Home },
+        { name: 'Profile', href: '/profile', icon: User },
+        { name: 'Activities', href: '/activities', icon: Activity },
+        { name: 'Settings', href: '/settings', icon: Settings },
       ];
 
   return (

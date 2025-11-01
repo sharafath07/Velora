@@ -21,7 +21,7 @@ const Layout = ({ children }) => {
 
   const handleLogout = async () => {
     await logout();
-    navigate('/Velora/login');
+    navigate('/login');
   };
 
   const isAdmin = user?.role === 'admin';

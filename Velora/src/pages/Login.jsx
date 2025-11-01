@@ -21,7 +21,7 @@ const Login = () => {
     
   
   useEffect(() => {
-    if (user) navigate('/Velora');
+    if (user) navigate('/');
   }, [user, navigate]);
 
   const handleLogin = async (e) => {
@@ -39,7 +39,7 @@ const Login = () => {
       console.error(error.response?.data || error.message);
       alert("Invalid credentials!");
     } finally {
-      navigate('/Velora');
+      navigate('/');
       setIsLoading(false);
     }
   };
@@ -66,7 +66,7 @@ const Login = () => {
       console.error(error.response?.data || error.message);
       alert("Signup failed!");
     } finally {
-      navigate('/Velora');
+      navigate('/');
       setIsLoading(false);
     }
   };
@@ -96,7 +96,7 @@ const Login = () => {
                 {showPasswordLogin ? <EyeClosed size={20} /> : <Eye size={20} />}
               </button>
             </div>
-            <Link to="/Velora/forgot-password" style={{ fontSize: "12px" }}>
+            <Link to="/forgot-password" style={{ fontSize: "12px" }}>
               Forgot your password?
             </Link>
             <button type="submit">Sign In</button>

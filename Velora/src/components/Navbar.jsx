@@ -29,10 +29,10 @@ const Navbar = () => {
   const cartItemsCount = getCartItemsCount();
 
   const navItems = [
-    { name: 'Home', path: '/Velora/' },
-    { name: 'Shop', path: '/Velora/shop' },
-    { name: 'About', path: '/Velora/about' },
-    { name: 'Contact', path: '/Velora/contact' },
+    { name: 'Home', path: '/' },
+    { name: 'Shop', path: '/shop' },
+    { name: 'About', path: '/about' },
+    { name: 'Contact', path: '/contact' },
   ];
 
   const isActiveLink = (path) => location.pathname === path;
@@ -40,7 +40,7 @@ const Navbar = () => {
   const handleLogout = () => {
     logoutUser();
     setIsUserMenuOpen(false);
-    navigate('/Velora/');
+    navigate('/');
   };
 
   // Close dropdown when clicking outside
@@ -60,7 +60,7 @@ const Navbar = () => {
         {/* --- Main Navbar Content --- */}
         <div className="navbar-content">
           {/* Logo */}
-          <Link to="/Velora/" className="navbar-logo">
+          <Link to="/" className="navbar-logo">
             <img src={logo} alt="Velora" width={50} height={50} />
             <span>Velora</span>
           </Link>
@@ -119,7 +119,7 @@ const Navbar = () => {
                     <div className="navbar-dropdown-divider"></div>
 
                     <Link
-                      to="/Velora/profile"
+                      to="/profile"
                       className="navbar-dropdown-item"
                       onClick={() => setIsUserMenuOpen(false)}
                     >
@@ -127,7 +127,7 @@ const Navbar = () => {
                     </Link>
 
                     <Link
-                      to="/Velora/dashboard"
+                      to="/dashboard"
                       className="navbar-dropdown-item"
                       onClick={() => setIsUserMenuOpen(false)}
                     >
@@ -135,7 +135,7 @@ const Navbar = () => {
                     </Link>
 
                     <Link
-                      to="/Velora/orders"
+                      to="/orders"
                       className="navbar-dropdown-item"
                       onClick={() => setIsUserMenuOpen(false)}
                     >
@@ -143,7 +143,7 @@ const Navbar = () => {
                     </Link>
 
                     <Link
-                      to="/Velora/settings"
+                      to="/settings"
                       className="navbar-dropdown-item"
                       onClick={() => setIsUserMenuOpen(false)}
                     >
@@ -159,13 +159,13 @@ const Navbar = () => {
                 )}
               </div>
             ) : (
-              <Link to="/Velora/login" className="navbar-login-btn">
+              <Link to="/login" className="navbar-login-btn">
                 Login / Signup
               </Link>
             )}
 
             {/* Cart Icon */}
-            <Link to="/Velora/cart" className="navbar-cart-btn">
+            <Link to="/cart" className="navbar-cart-btn">
               <ShoppingBag size={20} />
               {cartItemsCount > 0 && <span className="navbar-cart-badge">{cartItemsCount}</span>}
             </Link>
@@ -173,7 +173,7 @@ const Navbar = () => {
 
           {/* Mobile Menu Button */}
           <div className="navbar-mobile md:hidden">
-            <Link to="/Velora/cart" className="navbar-cart-btn">
+            <Link to="/cart" className="navbar-cart-btn">
               <ShoppingBag size={20} />
               {cartItemsCount > 0 && <span className="navbar-cart-badge">{cartItemsCount}</span>}
             </Link>
@@ -205,28 +205,28 @@ const Navbar = () => {
                 {user ? (
                   <>
                     <Link
-                      to="/Velora/profile"
+                      to="/profile"
                       className="navbar-mobile-nav-item"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Profile
                     </Link>
                     <Link
-                      to="/Velora/dashboard"
+                      to="/dashboard"
                       className="navbar-mobile-nav-item"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Dashboard
                     </Link>
                     <Link
-                      to="/Velora/orders"
+                      to="/orders"
                       className="navbar-mobile-nav-item"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       Orders
                     </Link>
                     <Link
-                      to="/Velora/settings"
+                      to="/settings"
                       className="navbar-mobile-nav-item"
                       onClick={() => setIsMenuOpen(false)}
                     >
@@ -238,7 +238,7 @@ const Navbar = () => {
                   </>
                 ) : (
                   <Link
-                    to="/Velora/login"
+                    to="/login"
                     className="navbar-mobile-login-btn"
                     onClick={() => setIsMenuOpen(false)}
                   >

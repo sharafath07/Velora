@@ -17,7 +17,7 @@ const app = express();
 
 // CORS Configuration - Allow Velora frontend
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || 'https://sharafath07.github.io/Velora/',
+  origin: process.env.FRONTEND_URL || 'https://velora-clothes.netlify.app/',
   credentials: true,
   optionsSuccessStatus: 200,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],

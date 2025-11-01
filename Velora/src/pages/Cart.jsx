@@ -18,7 +18,7 @@ const Cart = () => {
           <p className="cart-empty-description text-gray-600 mb-8">
             Discover our beautiful collection of luxury clothing
           </p>
-          <Link to="/Velora/shop">
+          <Link to="/shop">
             <Button size="lg">Start Shopping</Button>
           </Link>
         </div>
@@ -36,7 +36,7 @@ const Cart = () => {
             <h1 className="font-serif text-3xl font-bold text-gray-900">Shopping Cart</h1>
             <p className="text-gray-600 mt-1">{state.items.length} items in your cart</p>
           </div>
-          <Link to="/Velora/shop" className="cart-continue-shopping text-primary hover:text-primary-dark flex items-center">
+          <Link to="/shop" className="cart-continue-shopping text-primary hover:text-primary-dark flex items-center">
             <ArrowLeft size={16} className="mr-2" />
             Continue Shopping
           </Link>
@@ -51,7 +51,7 @@ const Cart = () => {
                 <div className="cart-item-content flex items-start space-x-4">
                   
                   {/* Product Image */}
-                  <Link to={`/Velora/product/${item.id}`} className="cart-item-image">
+                  <Link to={`/product/${item.id}`} className="cart-item-image">
                     <img
                       src={item.image}
                       alt={item.name}
@@ -62,7 +62,7 @@ const Cart = () => {
                   {/* Product Info */}
                   <div className="cart-item-info flex-1 min-w-0">
                     <Link
-                      to={`/Velora/product/${item.id}`}
+                      to={`/product/${item.id}`}
                       className="cart-item-name font-semibold text-lg text-gray-900 hover:text-primary transition-colors duration-200"
                     >
                       {item.name}
@@ -164,7 +164,7 @@ const Cart = () => {
               </Button>
 
               {/* Continue Shopping */}
-              <Link to="/Velora/shop" className="block text-center">
+              <Link to="/shop" className="block text-center">
                 <Button variant="outline" className="cart-checkout-btn w-full py-3 mb-4">
                   Continue Shopping
                 </Button>
