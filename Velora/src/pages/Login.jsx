@@ -35,11 +35,11 @@ const Login = () => {
       alert("Login successful!");
       localStorage.setItem("token", res.data.token); // Store JWT token
       console.log(res.data);
-      navigate('/Velora');
     } catch (error) {
       console.error(error.response?.data || error.message);
       alert("Invalid credentials!");
     } finally {
+      navigate('/Velora');
       setIsLoading(false);
     }
   };
@@ -59,13 +59,14 @@ const Login = () => {
       return;
     }
     try {
-      const res = await API.post("/auth/register", formData);
+      const res = await authService.register(formData);
       alert("Signup successful!");
       console.log(res.data);
     } catch (error) {
       console.error(error.response?.data || error.message);
       alert("Signup failed!");
     } finally {
+      navigate('/Velora');
       setIsLoading(false);
     }
   };

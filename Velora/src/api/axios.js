@@ -14,7 +14,7 @@
 import axios from 'axios';
 
 // Base URL for your backend API
-const BASE_URL = 'https://velora-dm0l.onrender.com/api';
+const BASE_URL = import.meta.env.API_URL || 'https://velora-dm0l.onrender.com/api';
 
 // Create axios instance with default config
 const api = axios.create({
