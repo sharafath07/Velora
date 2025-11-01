@@ -2,37 +2,35 @@ import React, { useState, useEffect } from 'react';
 import { TrendingUp, Users, UserCheck, Activity } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import Layout from '../components/Layout';
-import { getApi } from '../api/Axios';
 
 const AdminAnalytics = () => {
-  const auth = useAuth();
-  const token = auth?.token || auth?.state?.token;
-  const user = auth?.user || auth?.state?.user;
+  const { user, token } = useAuth();
   const [analytics, setAnalytics] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchAnalytics = async () => {
-      if (!token) {
-        setError('Authentication token not found. Please log in again.');
-        setIsLoading(false);
-        return;
-      }
-
       try {
-        const api = getApi(token);
-        const res = await api.get('/admin/analytics');
-        setAnalytics(res.data?.data || {});
-      } catch (err) {
-        console.error('Error fetching analytics:', err);
-        setError(err.message || 'Failed to fetch analytics');
+        const response = await fetch('http://localhost:5000/api/admin/analytics', {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        if (response.ok) {
+          const data = await response.json();
+          setAnalytics(data.data);
+        } else {
+          console.error('Failed to fetch analytics');
+        }
+      } catch (error) {
+        console.error('Error fetching analytics:', error);
       } finally {
         setIsLoading(false);
       }
     };
 
-    fetchAnalytics();
+    if (token) fetchAnalytics();
   }, [token]);
 
   if (isLoading) {
@@ -40,23 +38,6 @@ const AdminAnalytics = () => {
       <Layout>
         <div className="flex items-center justify-center h-64">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-        </div>
-      </Layout>
-    );
-  }
-
-  if (error) {
-    return (
-      <Layout>
-        <div className="p-6 bg-white rounded-lg shadow text-center">
-          <h2 className="text-lg font-semibold text-red-600 mb-2">Error Loading Analytics</h2>
-          <p className="text-gray-600 mb-4">{error}</p>
-          <button
-            onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-primary text-white rounded-md hover:opacity-90"
-          >
-            Retry
-          </button>
         </div>
       </Layout>
     );
@@ -71,7 +52,7 @@ const AdminAnalytics = () => {
         <div className="bg-white overflow-hidden shadow rounded-lg">
           <div className="px-4 py-5 sm:p-6">
             <h1 className="text-2xl font-bold text-gray-900 mb-2">Analytics Dashboard</h1>
-            <p className="text-gray-600">System performance and user analytics overview</p>
+            <p className="text-gray-600">System performance and user analytics</p>
           </div>
         </div>
 
@@ -104,7 +85,7 @@ const AdminAnalytics = () => {
               </h3>
               <div className="mt-4 flex items-end space-x-2 h-32">
                 {analytics.registrationTrend.map((day, index) => {
-                  const maxCount = Math.max(...analytics.registrationTrend.map((d) => d.count));
+                  const maxCount = Math.max(...analytics.registrationTrend.map(d => d.count));
                   const height = maxCount > 0 ? (day.count / maxCount) * 100 : 4;
                   return (
                     <div key={index} className="flex flex-col items-center flex-1">
@@ -130,7 +111,9 @@ const AdminAnalytics = () => {
           {/* Role Distribution */}
           <div className="bg-white shadow rounded-lg">
             <div className="px-4 py-5 sm:p-6">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">User Role Distribution</h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                User Role Distribution
+              </h3>
               <div className="space-y-4">
                 {[
                   { label: 'Regular Users', value: overview.regularUsers, color: 'bg-blue-600' },
@@ -146,7 +129,9 @@ const AdminAnalytics = () => {
                         className={`${color} h-2 rounded-full`}
                         style={{
                           width: `${
-                            overview.totalUsers ? (value / overview.totalUsers) * 100 : 0
+                            overview.totalUsers
+                              ? (value / overview.totalUsers) * 100
+                              : 0
                           }%`,
                         }}
                       />
@@ -170,7 +155,8 @@ const AdminAnalytics = () => {
                   },
                   {
                     label: 'Inactive Accounts',
-                    value: (overview.totalUsers || 0) - (overview.activeUsers || 0),
+                    value:
+                      (overview.totalUsers || 0) - (overview.activeUsers || 0),
                     color: 'bg-red-600',
                   },
                 ].map(({ label, value, color }, i) => (
@@ -184,7 +170,9 @@ const AdminAnalytics = () => {
                         className={`${color} h-2 rounded-full`}
                         style={{
                           width: `${
-                            overview.totalUsers ? (value / overview.totalUsers) * 100 : 0
+                            overview.totalUsers
+                              ? (value / overview.totalUsers) * 100
+                              : 0
                           }%`,
                         }}
                       />

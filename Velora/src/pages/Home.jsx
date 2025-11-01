@@ -1,35 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Link } from 'react-router-dom';
 import { ArrowRight, Star, Truck, Shield, Headphones } from 'lucide-react';
+import { Products } from '../data/product';
 import ProductCard from '../components/ProductCard';
 import Button from '../components/Button';
 
 const Home = () => {
-  const [featuredProducts, setFeaturedProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-
-  // Fetch products from backend
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        const res = await fetch('https://velora-dm0l.onrender.com/api/products');
-        const data = await res.json();
-        if (res.ok && data?.data) {
-          // Filter featured products from API
-          const featured = data.data.filter(p => p.featured).slice(0, 6);
-          setFeaturedProducts(featured);
-        } else {
-          console.error('Error fetching products:', data.message);
-        }
-      } catch (error) {
-        console.error('Fetch error:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, []);
+  const featuredProducts = Products.filter(product => product.featured).slice(0, 6);
 
   return (
     <div className="min-h-screen home-page">
@@ -58,7 +35,7 @@ const Home = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-center space-x-8 text-sm font-medium">
             <span>✨ New Arrivals Weekly</span>
-            <span>🚚 Free Shipping Over ₹2000</span>
+            <span>🚚 Free Shipping Over $200</span>
             <span>💎 Premium Quality Guaranteed</span>
             <span>🔄 Easy 30-Day Returns</span>
           </div>
@@ -77,27 +54,17 @@ const Home = () => {
             </p>
           </div>
 
-          {loading ? (
-            <div className="flex justify-center py-10">
-              <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-primary"></div>
-            </div>
-          ) : featuredProducts.length > 0 ? (
-            <div className="product-card-container home-featured-grid">
-              {featuredProducts.map((product) => (
-                <ProductCard
-                  key={product._id}
-                  product={product}
-                  className="animate-slide-up"
-                />
-              ))}
-            </div>
-          ) : (
-            <p className="text-center text-gray-500 py-10">
-              No featured products available.
-            </p>
-          )}
+          <div className="product-card-container home-featured-grid">
+            {featuredProducts.map((product) => (
+              <ProductCard
+                key={product.id}
+                product={product}
+                className="animate-slide-up"
+              />
+            ))}
+          </div>
 
-          <div className="text-center home-featured-cta mt-10">
+          <div className="text-center home-featured-cta">
             <Link to="/Velora/shop">
               <Button variant="outline" size="lg">
                 View All Products
@@ -124,7 +91,7 @@ const Home = () => {
               { name: 'Dresses', image: 'https://images.pexels.com/photos/1536619/pexels-photo-1536619.jpeg?auto=compress&cs=tinysrgb&w=400' },
               { name: 'Outerwear', image: 'https://images.pexels.com/photos/1375849/pexels-photo-1375849.jpeg?auto=compress&cs=tinysrgb&w=400' },
               { name: 'Knitwear', image: 'https://images.pexels.com/photos/7679720/pexels-photo-7679720.jpeg?auto=compress&cs=tinysrgb&w=400' },
-              { name: 'Accessories', image: 'https://images.pexels.com/photos/7679471/pexels-photo-7679471.jpeg?auto=compress&cs=tinysrgb&w=400' },
+              { name: 'Accessories', image: 'https://images.pexels.com/photos/7679471/pexels-photo-7679471.jpeg?auto=compress&cs=tinysrgb&w=400' }
             ].map((category) => (
               <Link
                 key={category.name}
@@ -164,7 +131,9 @@ const Home = () => {
                 in her Velora ensemble.
               </p>
               <Link to="/Velora/about">
-                <Button variant="outline">Learn More About Us</Button>
+                <Button variant="outline">
+                  Learn More About Us
+                </Button>
               </Link>
             </div>
             <div className="animate-slide-up home-story-image">
@@ -181,7 +150,9 @@ const Home = () => {
       {/* Newsletter Section */}
       <section className="py-16 bg-primary text-white home-newsletter">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="font-serif text-3xl font-bold mb-4">Stay in Style</h2>
+          <h2 className="font-serif text-3xl font-bold mb-4">
+            Stay in Style
+          </h2>
           <p className="text-lg mb-8 opacity-90">
             Subscribe to our newsletter for exclusive offers, style tips, and first access to new collections.
           </p>
@@ -206,28 +177,36 @@ const Home = () => {
       <section className="py-16 bg-white home-features">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 home-features-grid">
           <div className="text-center home-feature-item">
-            <div className="home-feature-icon"><Truck size={24} /></div>
+            <div className="home-feature-icon">
+              <Truck size={24} />
+            </div>
             <h3 className="font-semibold text-lg mb-2 home-feature-title">Free Shipping</h3>
             <p className="text-gray-600 text-sm home-feature-description">
-              Complimentary shipping on all orders over ₹2000
+              Complimentary shipping on all orders over $200
             </p>
           </div>
           <div className="text-center home-feature-item">
-            <div className="home-feature-icon"><Shield size={24} /></div>
+            <div className="home-feature-icon">
+              <Shield size={24} />
+            </div>
             <h3 className="font-semibold text-lg mb-2 home-feature-title">Secure Payment</h3>
             <p className="text-gray-600 text-sm home-feature-description">
               Your payment information is always protected
             </p>
           </div>
           <div className="text-center home-feature-item">
-            <div className="home-feature-icon"><Star size={24} /></div>
+            <div className="home-feature-icon">
+              <Star size={24} />
+            </div>
             <h3 className="font-semibold text-lg mb-2 home-feature-title">Premium Quality</h3>
             <p className="text-gray-600 text-sm home-feature-description">
               Carefully curated luxury pieces that last
             </p>
           </div>
           <div className="text-center home-feature-item">
-            <div className="home-feature-icon"><Headphones size={24} /></div>
+            <div className="home-feature-icon">
+              <Headphones size={24} />
+            </div>
             <h3 className="font-semibold text-lg mb-2 home-feature-title">24/7 Support</h3>
             <p className="text-gray-600 text-sm home-feature-description">
               Dedicated customer service whenever you need us

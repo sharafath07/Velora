@@ -1,42 +1,61 @@
 import React, { useState, useEffect } from 'react';
 import { Package, Clock, CheckCircle, XCircle, Eye } from 'lucide-react';
 import Layout from '../components/Layout';
-import { useAuth } from '../contexts/AuthContext';
 import '../styles/orders.css';
 
-const API_URL = 'https://velora-dm0l.onrender.com/api';
-
 const Orders = () => {
-  const { user } = useAuth();
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedOrder, setSelectedOrder] = useState(null);
 
-  // Fetch user orders from backend
   useEffect(() => {
-    const fetchOrders = async () => {
-      if (!user) return;
-      setIsLoading(true);
+    const mockOrders = [
+      {
+        id: '1',
+        orderNumber: 'ORD-2024-001',
+        date: '2024-03-15',
+        status: 'delivered',
+        total: 299.99,
+        items: [
+          {
+            id: '1',
+            name: 'Classic White Sneakers',
+            quantity: 1,
+            price: 149.99,
+            image: 'https://images.pexels.com/photos/2529148/pexels-photo-2529148.jpeg',
+          },
+          {
+            id: '2',
+            name: 'Leather Crossbody Bag',
+            quantity: 1,
+            price: 150.00,
+            image: 'https://images.pexels.com/photos/2081199/pexels-photo-2081199.jpeg',
+          },
+        ],
+      },
+      {
+        id: '2',
+        orderNumber: 'ORD-2024-002',
+        date: '2024-03-20',
+        status: 'shipped',
+        total: 89.99,
+        items: [
+          {
+            id: '3',
+            name: 'Minimalist Watch',
+            quantity: 1,
+            price: 89.99,
+            image: 'https://images.pexels.com/photos/277319/pexels-photo-277319.jpeg',
+          },
+        ],
+      },
+    ];
 
-      try {
-        const res = await fetch(`${API_URL}/orders/user/${user._id}`, {
-          headers: { 'Content-Type': 'application/json' },
-        });
-
-        if (!res.ok) throw new Error('Failed to fetch orders');
-
-        const data = await res.json();
-        setOrders(data);
-      } catch (error) {
-        console.error('Error fetching orders:', error);
-        setOrders([]);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-
-    fetchOrders();
-  }, [user]);
+    setTimeout(() => {
+      setOrders(mockOrders);
+      setIsLoading(false);
+    }, 500);
+  }, []);
 
   const getStatusIcon = (status) => {
     switch (status) {
@@ -50,13 +69,11 @@ const Orders = () => {
         return <CheckCircle className="status-icon delivered" />;
       case 'cancelled':
         return <XCircle className="status-icon cancelled" />;
-      default:
-        return <Clock className="status-icon pending" />;
     }
   };
 
   const getStatusText = (status) => {
-    return status ? status.charAt(0).toUpperCase() + status.slice(1) : 'Unknown';
+    return status.charAt(0).toUpperCase() + status.slice(1);
   };
 
   if (isLoading) {
@@ -87,13 +104,12 @@ const Orders = () => {
         ) : (
           <div className="orders-list">
             {orders.map((order) => (
-              <div key={order._id} className="order-card">
+              <div key={order.id} className="order-card">
                 <div className="order-card-header">
                   <div className="order-info">
-                    <h3>{order.orderNumber || `Order #${order._id.slice(-6)}`}</h3>
+                    <h3>{order.orderNumber}</h3>
                     <p className="order-date">
-                      Placed on{' '}
-                      {new Date(order.createdAt).toLocaleDateString('en-US', {
+                      Placed on {new Date(order.date).toLocaleDateString('en-US', {
                         year: 'numeric',
                         month: 'long',
                         day: 'numeric',
@@ -109,8 +125,8 @@ const Orders = () => {
                 </div>
 
                 <div className="order-items">
-                  {order.items.map((item, index) => (
-                    <div key={index} className="order-item">
+                  {order.items.map((item) => (
+                    <div key={item.id} className="order-item">
                       <img src={item.image} alt={item.name} />
                       <div className="order-item-details">
                         <p className="order-item-name">{item.name}</p>
@@ -140,14 +156,8 @@ const Orders = () => {
         )}
 
         {selectedOrder && (
-          <div
-            className="order-modal-overlay"
-            onClick={() => setSelectedOrder(null)}
-          >
-            <div
-              className="order-modal"
-              onClick={(e) => e.stopPropagation()}
-            >
+          <div className="order-modal-overlay" onClick={() => setSelectedOrder(null)}>
+            <div className="order-modal" onClick={(e) => e.stopPropagation()}>
               <button
                 className="order-modal-close"
                 onClick={() => setSelectedOrder(null)}
@@ -157,29 +167,18 @@ const Orders = () => {
               <h2>Order Details</h2>
               <div className="order-modal-content">
                 <div className="order-modal-info">
-                  <p>
-                    <strong>Order Number:</strong>{' '}
-                    {selectedOrder.orderNumber || selectedOrder._id}
-                  </p>
-                  <p>
-                    <strong>Date:</strong>{' '}
-                    {new Date(selectedOrder.createdAt).toLocaleDateString()}
-                  </p>
-                  <p>
-                    <strong>Status:</strong>{' '}
-                    {getStatusText(selectedOrder.status)}
-                  </p>
+                  <p><strong>Order Number:</strong> {selectedOrder.orderNumber}</p>
+                  <p><strong>Date:</strong> {new Date(selectedOrder.date).toLocaleDateString()}</p>
+                  <p><strong>Status:</strong> {getStatusText(selectedOrder.status)}</p>
                 </div>
                 <div className="order-modal-items">
                   <h3>Items</h3>
-                  {selectedOrder.items.map((item, index) => (
-                    <div key={index} className="order-modal-item">
+                  {selectedOrder.items.map((item) => (
+                    <div key={item.id} className="order-modal-item">
                       <img src={item.image} alt={item.name} />
                       <div>
                         <p>{item.name}</p>
-                        <p>
-                          Qty: {item.quantity} × ${item.price.toFixed(2)}
-                        </p>
+                        <p>Qty: {item.quantity} × ${item.price.toFixed(2)}</p>
                       </div>
                     </div>
                   ))}

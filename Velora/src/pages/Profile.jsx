@@ -1,100 +1,53 @@
-import React, { useState, useEffect } from "react";
-import axios from "axios";
-import { User, Mail, Phone, MapPin, Save, X, Edit2 } from "lucide-react";
-import Layout from "../components/Layout";
-import Button from "../components/Button";
-
-const API_BASE = "https://velora-dm0l.onrender.com/api";
+import React, { useState } from 'react';
+import { User, Mail, Phone, MapPin, CreditCard as Edit2, Save, X } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
+import Layout from '../components/Layout';
+import Button from '../components/Button';
 
 const Profile = () => {
-  const [user, setUser] = useState(null);
-  const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
-    phone: "",
-    address: "",
-  });
+  const { user, updateProfile } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
-  const [message, setMessage] = useState({ error: "", success: "" });
+  const [message, setMessage] = useState({ error: '', success: '' });
 
-  const token = localStorage.getItem("token");
+  const [formData, setFormData] = useState({
+    firstName: user?.firstName || '',
+    lastName: user?.lastName || '',
+    phone: user?.phone || '',
+    address: user?.address || '',
+  });
 
-  // ✅ Fetch user profile on mount
-  useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const { data } = await axios.get(`${API_BASE}/users/profile`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-        setUser(data);
-        setFormData({
-          firstName: data.firstName || "",
-          lastName: data.lastName || "",
-          phone: data.phone || "",
-          address: data.address || "",
-        });
-      } catch (err) {
-        setMessage({
-          error: err.response?.data?.message || "Failed to load profile",
-          success: "",
-        });
-      }
-    };
-
-    fetchProfile();
-  }, [token]);
-
-  // ✅ Handle input change
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
-    setMessage({ error: "", success: "" });
+    setMessage({ error: '', success: '' });
   };
 
-  // ✅ Handle update
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    setMessage({ error: "", success: "" });
+    setMessage({ error: '', success: '' });
 
     try {
-      const { data } = await axios.put(`${API_BASE}/users/profile`, formData, {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setUser(data);
-      setMessage({ error: "", success: "Profile updated successfully!" });
+      await updateProfile(formData);
+      setMessage({ error: '', success: 'Profile updated successfully!' });
       setIsEditing(false);
     } catch (err) {
-      setMessage({
-        error: err.response?.data?.message || "Failed to update profile",
-        success: "",
-      });
+      setMessage({ error: err.message || 'Failed to update profile', success: '' });
     } finally {
       setIsLoading(false);
     }
   };
 
-  // ✅ Handle cancel
   const handleCancel = () => {
-    if (user) {
-      setFormData({
-        firstName: user.firstName || "",
-        lastName: user.lastName || "",
-        phone: user.phone || "",
-        address: user.address || "",
-      });
-    }
+    setFormData({
+      firstName: user?.firstName || '',
+      lastName: user?.lastName || '',
+      phone: user?.phone || '',
+      address: user?.address || '',
+    });
     setIsEditing(false);
-    setMessage({ error: "", success: "" });
+    setMessage({ error: '', success: '' });
   };
-
-  if (!user) {
-    return (
-      <Layout>
-        <div className="text-center py-20 text-gray-600">Loading profile...</div>
-      </Layout>
-    );
-  }
 
   return (
     <Layout>
@@ -128,7 +81,7 @@ const Profile = () => {
 
             <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                {/* First Name */}
+                {/** First Name */}
                 <div>
                   <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
                     First Name
@@ -138,17 +91,18 @@ const Profile = () => {
                     <input
                       type="text"
                       name="firstName"
+                      id="firstName"
                       value={formData.firstName}
                       onChange={handleChange}
                       disabled={!isEditing}
                       className={`pl-10 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm ${
-                        !isEditing ? "bg-gray-50" : ""
+                        !isEditing ? 'bg-gray-50' : ''
                       }`}
                     />
                   </div>
                 </div>
 
-                {/* Last Name */}
+                {/** Last Name */}
                 <div>
                   <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
                     Last Name
@@ -158,17 +112,18 @@ const Profile = () => {
                     <input
                       type="text"
                       name="lastName"
+                      id="lastName"
                       value={formData.lastName}
                       onChange={handleChange}
                       disabled={!isEditing}
                       className={`pl-10 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm ${
-                        !isEditing ? "bg-gray-50" : ""
+                        !isEditing ? 'bg-gray-50' : ''
                       }`}
                     />
                   </div>
                 </div>
 
-                {/* Email */}
+                {/** Email */}
                 <div className="sm:col-span-2">
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                     Email Address
@@ -178,14 +133,16 @@ const Profile = () => {
                     <input
                       type="email"
                       name="email"
-                      value={user.email}
+                      id="email"
+                      value={user?.email}
                       disabled
                       className="pl-10 block w-full border-gray-300 rounded-md shadow-sm bg-gray-50 sm:text-sm"
                     />
                   </div>
+                  <p className="mt-1 text-xs text-gray-500">Email cannot be changed</p>
                 </div>
 
-                {/* Phone */}
+                {/** Phone */}
                 <div>
                   <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
                     Phone Number
@@ -195,17 +152,34 @@ const Profile = () => {
                     <input
                       type="tel"
                       name="phone"
+                      id="phone"
                       value={formData.phone}
                       onChange={handleChange}
                       disabled={!isEditing}
                       className={`pl-10 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm ${
-                        !isEditing ? "bg-gray-50" : ""
+                        !isEditing ? 'bg-gray-50' : ''
                       }`}
+                      placeholder="(555) 123-4567"
                     />
                   </div>
                 </div>
 
-                {/* Address */}
+                {/** Role */}
+                <div>
+                  <label htmlFor="role" className="block text-sm font-medium text-gray-700">
+                    Role
+                  </label>
+                  <div className="mt-1">
+                    <input
+                      type="text"
+                      value={user?.role === 'admin' ? 'Administrator' : 'User'}
+                      disabled
+                      className="block w-full border-gray-300 rounded-md shadow-sm bg-gray-50 sm:text-sm"
+                    />
+                  </div>
+                </div>
+
+                {/** Address */}
                 <div className="sm:col-span-2">
                   <label htmlFor="address" className="block text-sm font-medium text-gray-700">
                     Address
@@ -214,13 +188,15 @@ const Profile = () => {
                     <MapPin className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                     <textarea
                       name="address"
+                      id="address"
                       rows={3}
                       value={formData.address}
                       onChange={handleChange}
                       disabled={!isEditing}
                       className={`pl-10 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary focus:border-primary sm:text-sm ${
-                        !isEditing ? "bg-gray-50" : ""
+                        !isEditing ? 'bg-gray-50' : ''
                       }`}
+                      placeholder="123 Main St, City, State 12345"
                     />
                   </div>
                 </div>

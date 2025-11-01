@@ -12,7 +12,6 @@ import Cart from './pages/Cart';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import Login from './pages/Login';
-import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import AdminDashboard from './pages/AdminDashboard';
 import Profile from './pages/Profile';
@@ -34,7 +33,6 @@ function App() {
             <Routes>
               {/* Public Routes */}
               <Route path="/Velora/login" element={<Login />} />
-              <Route path="/Velora/register" element={<Register />} />
               <Route path="/Velora/unauthorized" element={<Unauthorized />} />
               
               {/* Public Routes with Navbar/Footer */}

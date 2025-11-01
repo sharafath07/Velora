@@ -3,11 +3,9 @@ import { Search, Plus, Edit, Trash2, UserCheck, UserX } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import Layout from '../components/Layout';
 import Button from '../components/Button';
-import { getApi } from '../api/Axios'; // ✅ use centralized axios instance
 
 const AdminUsers = () => {
-  const { state } = useAuth();
-  const token = state?.token;
+  const { token } = useAuth();
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -18,15 +16,17 @@ const AdminUsers = () => {
     if (!token) return;
 
     const fetchUsers = async () => {
-      setIsLoading(true);
       try {
-        // ✅ Use your centralized axios API with token
-        const api = getApi(token);
-        const response = await api.get(`/admin/users?page=${page}&limit=10`);
+        const response = await fetch(`http://localhost:5000/api/admin/users?page=${page}&limit=10`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
 
-        if (response.data?.data) {
-          setUsers(response.data.data);
-          setTotalPages(response.data.pagination?.pages || 1);
+        if (response.ok) {
+          const data = await response.json();
+          setUsers(data.data);
+          setTotalPages(data.pagination.pages);
         }
       } catch (error) {
         console.error('Error fetching users:', error);
@@ -40,9 +40,9 @@ const AdminUsers = () => {
 
   const filteredUsers = users.filter(
     (u) =>
-      u.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      u.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      u.email?.toLowerCase().includes(searchTerm.toLowerCase())
+      u.firstName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      u.lastName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      u.email.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const formatDate = (dateString) =>
@@ -115,12 +115,12 @@ const AdminUsers = () => {
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredUsers.map((u) => (
-                  <tr key={u._id || u.id} className="hover:bg-gray-50">
+                  <tr key={u.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap flex items-center">
                       <div className="h-10 w-10 rounded-full bg-primary flex items-center justify-center">
                         <span className="text-sm font-medium text-white">
-                          {u.firstName?.[0]}
-                          {u.lastName?.[0]}
+                          {u.firstName[0]}
+                          {u.lastName[0]}
                         </span>
                       </div>
                       <div className="ml-4">
