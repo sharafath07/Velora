@@ -33,8 +33,10 @@ const Login = () => {
     try {
       const res = await authService.login(email, password);
       alert("Login successful!");
-      localStorage.setItem("token", res.data.token); // Store JWT token
-      console.log(res.data);
+      localStorage.setItem("token", res.token); 
+      localStorage.setItem("user", JSON.stringify(res.user));
+// Store JWT token
+      console.log(res);
     } catch (error) {
       console.error(error.response?.data || error.message);
       alert("Invalid credentials!");

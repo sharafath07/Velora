@@ -6,6 +6,7 @@ const { errorHandler } = require('./middleware/errorMiddleware');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 
+
 // Load environment variables
 dotenv.config();
 
@@ -16,13 +17,27 @@ connectDB();
 const app = express();
 
 // CORS Configuration - Allow Velora frontend
+const allowedOrigins = [
+  process.env.FRONTEND_URL,              // From .env (e.g., Netlify)
+  'https://velora-clothes.netlify.app',  // Deployed frontend
+  'http://localhost:5173',               // Vite dev server
+  'http://localhost:3000'                // CRA dev server (optional)
+];
+
 const corsOptions = {
-  origin: process.env.FRONTEND_URL || 'https://velora-clothes.netlify.app/',
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error('❌ Not allowed by CORS'));
+    }
+  },
   credentials: true,
   optionsSuccessStatus: 200,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']
 };
+
 
 // Middleware
 app.use(cors(corsOptions));
