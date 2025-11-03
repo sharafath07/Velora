@@ -1,61 +1,118 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo , useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Search, Filter, Grid2x2 as Grid, List, SlidersHorizontal } from 'lucide-react';
-import { Products, categories } from '../data/product';
+// import { Products, categories } from '../data/product';
 import ProductCard from '../components/ProductCard';
 import Button from '../components/Button';
+import productService from '../api/productService.js'
+import categoryService from '../api/categoryService.js';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const Shop = () => {
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState(null);
+    const [categories, setCategories] = useState(['All']);
     const [searchParams, setSearchParams] = useSearchParams();
     const [searchTerm, setSearchTerm] = useState('');
+    const [filters, setFilters] = useState({
+        page: 1,
+        limit: 12,
+        search: '',
+        category: '',
+        minPrice: '',
+        maxPrice: '',
+        sort: 'newest'
+    });
     const [selectedCategory, setSelectedCategory] = useState(searchParams.get('category') || 'All');
     const [sortBy, setSortBy] = useState('featured');
     const [viewMode, setViewMode] = useState('grid');
     const [priceRange, setPriceRange] = useState([0, 1000]);
 
-    // Update URL when category changes
-    const handleCategoryChange = (category) => {
-        setSelectedCategory(category);
-        if (category === 'All') {
-            searchParams.delete('category');
-        } else {
-            searchParams.set('category', category);
+    // // Update URL when category changes
+    // const handleCategoryChange = (category) => {
+    //     setSelectedCategory(category);
+    //     if (category === 'All') {
+    //         searchParams.delete('category');
+    //     } else {
+    //         searchParams.set('category', category);
+    //     }
+    //     setSearchParams(searchParams);
+    // };
+
+    useEffect(() => {
+        fetchProducts();
+        fetchCategories();
+    }, [filters]);
+
+    const fetchProducts = async () => {
+        setLoading(true);
+        try {
+        const response = await productService.getAll(filters);
+        setProducts(response.products);        
+        } catch (err) {
+        setError(err.message || 'Failed to fetch products');
+        } finally {
+        setLoading(false);
         }
-        setSearchParams(searchParams);
     };
 
-    const filteredAndSortedProducts = useMemo(() => {
-        let filtered = Products.filter(product => {
-            const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                                                     product.description.toLowerCase().includes(searchTerm.toLowerCase());
-            const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory;
-            const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1];
-            
-            return matchesSearch && matchesCategory && matchesPrice;
-        });
-
-        // Sort products
-        switch (sortBy) {
-            case 'price-low':
-                filtered.sort((a, b) => a.price - b.price);
-                break;
-            case 'price-high':
-                filtered.sort((a, b) => b.price - a.price);
-                break;
-            case 'name':
-                filtered.sort((a, b) => a.name.localeCompare(b.name));
-                break;
-            case 'featured':
-            default:
-                filtered.sort((a, b) => {
-                    if (a.featured && !b.featured) return -1;
-                    if (!a.featured && b.featured) return 1;
-                    return 0;
-                });
+    const fetchCategories = async () => {
+        setLoading(true);
+        try {
+        const response = await categoryService.getAll();       
+        
+        setCategories(['All', ...response.categories.map(cat => cat.name)]);
+        } catch (err) {
+        setError(err.message || 'Failed to fetch categories');
+        } finally {
+        setLoading(false);
         }
+    }
 
-        return filtered;
-    }, [searchTerm, selectedCategory, sortBy, priceRange]);
+    const handleSearch = (e) => {
+        setFilters({ ...filters, search: e.target.value, page: 1 });
+    };
+
+    const handleSortChange = (e) => {
+        setFilters({ ...filters, sort: e.target.value, page: 1 });
+    };
+
+    if (loading) return <LoadingSpinner size="lg" className="mx-auto my-20" />;
+    if (error) return alert(error);
+
+    // const filteredAndSortedProducts = useMemo(() => {
+    //     let filtered = Products.filter(product => {
+    //         const matchesSearch = product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+    //                                                  product.description.toLowerCase().includes(searchTerm.toLowerCase());
+    //         const matchesCategory = selectedCategory === 'All' || product.category === selectedCategory;
+    //         const matchesPrice = product.price >= priceRange[0] && product.price <= priceRange[1];
+            
+    //         return matchesSearch && matchesCategory && matchesPrice;
+    //     });
+
+    //     // Sort products
+    //     switch (sortBy) {
+    //         case 'price-low':
+    //             filtered.sort((a, b) => a.price - b.price);
+    //             break;
+    //         case 'price-high':
+    //             filtered.sort((a, b) => b.price - a.price);
+    //             break;
+    //         case 'name':
+    //             filtered.sort((a, b) => a.name.localeCompare(b.name));
+    //             break;
+    //         case 'featured':
+    //         default:
+    //             filtered.sort((a, b) => {
+    //                 if (a.featured && !b.featured) return -1;
+    //                 if (!a.featured && b.featured) return 1;
+    //                 return 0;
+    //             });
+    //     }
+
+    //     return filtered;
+    // }, [searchTerm, selectedCategory, sortBy, priceRange]);
 
     return (
         <div className="shop-container">
@@ -64,7 +121,7 @@ const Shop = () => {
                 <div className="shop-header">
                     <h1 className="shop-title">Shop Collection</h1>
                     <p className="shop-description">
-                        Discover our complete range of luxury fashion • {filteredAndSortedProducts.length} products
+                        Discover our complete range of luxury fashion • {products.length} products
                     </p>
                 </div>
 
@@ -161,11 +218,11 @@ const Shop = () => {
                 {/* Products Grid */}
                 <div className="shop-results">
                     <p className="shop-results-text">
-                        Showing {filteredAndSortedProducts.length} of {Products.length} products
+                        Showing {products.length} of {products.length} products
                     </p>
                 </div>
 
-                {filteredAndSortedProducts.length > 0 ? (
+                {products.length > 0 ? (
                     <div 
                         className={`shop-products ${
                             viewMode === 'grid' 
@@ -173,9 +230,9 @@ const Shop = () => {
                                 : 'shop-products-list'
                         }`}
                     >
-                        {filteredAndSortedProducts.map((product) => (
+                        {products.map((product) => (
                             <ProductCard 
-                                key={product.id} 
+                                key={product._id || product.id}
                                 product={product}
                                 className={viewMode === 'list' ? 'flex' : ''}
                             />

@@ -74,29 +74,39 @@ const handleQuickAdd = (e) => {
           
           {/* Color Options Preview */}
           <div className="product-card-colors">
-            {product.colors.slice(0, 3).map((color, index) => (
-              <div
-                key={index}
-                className="product-card-color"
-                style={{
-                  backgroundColor: color.toLowerCase() === 'white' ? '#ffffff' :
-                                 color.toLowerCase() === 'black' ? '#000000' :
-                                 color.toLowerCase() === 'navy' ? '#1e3a8a' :
-                                 color.toLowerCase() === 'gray' ? '#6b7280' :
-                                 color.toLowerCase() === 'beige' ? '#d2b48c' :
-                                 color.toLowerCase() === 'cream' ? '#f5f5dc' :
-                                 color.toLowerCase() === 'camel' ? '#c19a6b' :
-                                 color.toLowerCase() === 'burgundy' ? '#800020' :
-                                 color.toLowerCase() === 'emerald' ? '#50c878' :
-                                 color.toLowerCase() === 'blush' ? '#e6a5b5' :
-                                 '#e6a5b5'
-                }}
-              />
-            ))}
-            {product.colors.length > 3 && (
-              <span className="product-card-colors-more">+{product.colors.length - 3}</span>
+            {Array.isArray(product.colors) && product.colors.length > 0 ? (
+              <>
+                {product.colors.slice(0, 3).map((color, index) => (
+                  <div
+                    key={index}
+                    className="product-card-color"
+                    style={{
+                      backgroundColor:
+                        color.toLowerCase() === 'white' ? '#ffffff' :
+                        color.toLowerCase() === 'black' ? '#000000' :
+                        color.toLowerCase() === 'navy' ? '#1e3a8a' :
+                        color.toLowerCase() === 'gray' ? '#6b7280' :
+                        color.toLowerCase() === 'beige' ? '#d2b48c' :
+                        color.toLowerCase() === 'cream' ? '#f5f5dc' :
+                        color.toLowerCase() === 'camel' ? '#c19a6b' :
+                        color.toLowerCase() === 'burgundy' ? '#800020' :
+                        color.toLowerCase() === 'emerald' ? '#50c878' :
+                        color.toLowerCase() === 'blush' ? '#e6a5b5' :
+                        '#e6a5b5'
+                    }}
+                  />
+                ))}
+                {product.colors.length > 3 && (
+                  <span className="product-card-colors-more">
+                    +{product.colors.length - 3}
+                  </span>
+                )}
+              </>
+            ) : (
+              <span className="product-card-colors-none">No colors</span>
             )}
           </div>
+
         </div>
       </Link>
     </div>

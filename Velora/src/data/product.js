@@ -328,7 +328,7 @@ export const Products = [
         sizes: ["One Size"],
         colors: ["Black", "Gold", "Silver"],
         featured: false,
-    },
+    }
 ];
 
 export const categories = ["All", "Dresses", "Tops", "Bottoms", "Knitwear", "Outerwear", "Accessories", "Shoes", "Sleepwear"];

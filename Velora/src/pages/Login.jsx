@@ -36,12 +36,11 @@ const Login = () => {
       localStorage.setItem("token", res.token); 
       localStorage.setItem("user", JSON.stringify(res.user));
 // Store JWT token
-      console.log(res);
+      navigate('/');
     } catch (error) {
       console.error(error.response?.data || error.message);
       alert("Invalid credentials!");
     } finally {
-      navigate('/');
       setIsLoading(false);
     }
   };
@@ -63,12 +62,11 @@ const Login = () => {
     try {
       const res = await authService.register(formData);
       alert("Signup successful!");
-      console.log(res.data);
+      navigate('/');
     } catch (error) {
       console.error(error.response?.data || error.message);
       alert("Signup failed!");
     } finally {
-      navigate('/');
       setIsLoading(false);
     }
   };
