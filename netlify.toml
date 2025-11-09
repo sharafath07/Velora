@@ -1,0 +1,9 @@
+[build]
+  base = "Velora"
+  command = "npm run build"
+  publish = "Velora/dist"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
