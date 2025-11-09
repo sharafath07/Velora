@@ -37,12 +37,12 @@ const authService = {
 
   // Get user profile
   getProfile: async () => {
-    try {
-      const response = await api.get('/auth/profile');
-      return response.data;
-    } catch (error) {
-      throw error.response?.data || error.message;
-    }
+    const token = localStorage.getItem('token');
+    if (!token) throw new Error('No token found');
+    const res = await api.get('/user/profile', {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return res.data;
   },
 
   // Update user profile

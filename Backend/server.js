@@ -6,7 +6,6 @@ const { errorHandler } = require('./middleware/errorMiddleware');
 const rateLimit = require('express-rate-limit');
 const helmet = require('helmet');
 
-
 // Load environment variables
 dotenv.config();
 
@@ -16,12 +15,24 @@ connectDB();
 // Initialize Express app
 const app = express();
 
+// Security Middleware (Helmet must come first)
+app.use(helmet());
+
+// Rate Limiting (before routes)
+const limiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 100, // limit each IP to 100 requests per 15 minutes
+  message: {
+    success: false,
+    message: 'Too many requests from this IP, please try again later.'
+  }
+});
+app.use('/api', limiter);
+
 // CORS Configuration - Allow Velora frontend
 const allowedOrigins = [
-  process.env.FRONTEND_URL,              // From .env (e.g., Netlify)
-  'https://velora-clothes.netlify.app',  // Deployed frontend
-  'http://localhost:5173',               // Vite dev server
-  'http://localhost:3000'                // CRA dev server (optional)
+  process.env.FRONTEND_URL,
+  'http://localhost:5173'
 ];
 
 const corsOptions = {
@@ -38,13 +49,14 @@ const corsOptions = {
   allowedHeaders: ['Content-Type', 'Authorization']
 };
 
-
-// Middleware
+// Apply CORS
 app.use(cors(corsOptions));
+
+// Body Parser
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Request Logger (Development)
+// Request Logger (Development only)
 if (process.env.NODE_ENV === 'development') {
   app.use((req, res, next) => {
     console.log(`${req.method} ${req.path}`);
@@ -69,7 +81,7 @@ app.use('/api/products', require('./routes/productRoutes'));
 app.use('/api/orders', require('./routes/orderRoutes'));
 
 // 404 Handler
-app.use('*', (req, res) => {
+app.all('*', (req, res) => {
   res.status(404).json({
     success: false,
     message: `Route ${req.originalUrl} not found`
@@ -92,16 +104,7 @@ app.listen(PORT, () => {
 
 // Handle unhandled promise rejections
 process.on('unhandledRejection', (err) => {
-  console.log('❌ UNHANDLED REJECTION! Shutting down...');
-  console.log(err.name, err.message);
+  console.error('❌ UNHANDLED REJECTION! Shutting down...');
+  console.error(err.name, err.message);
   process.exit(1);
 });
-
-const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limit each IP to 100 requests per windowMs
-});
-
-app.use('/api/', limiter);
-
-app.use(helmet());
