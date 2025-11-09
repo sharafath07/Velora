@@ -1,0 +1,8 @@
+[build]
+  base = "Velora"
+  publish = "Velora/build"
+  functions = "Backend/functions"
+
+[dev]
+  command = "npm start"
+  port = 3000
