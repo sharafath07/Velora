@@ -4,9 +4,14 @@ import { ArrowRight, Star, Truck, Shield, Headphones } from 'lucide-react';
 import { Products } from '../data/product';
 import ProductCard from '../components/ProductCard';
 import Button from '../components/Button';
+import authService from '../api/authService';
 
 const Home = () => {
   const featuredProducts = Products.filter(product => product.featured).slice(0, 6);
+  const user = authService.getProfile();
+  
+  console.log(user);
+  
 
   return (
     <div className="min-h-screen home-page">

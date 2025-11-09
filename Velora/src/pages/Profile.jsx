@@ -1,21 +1,42 @@
-import React, { useState } from 'react';
-import { User, Mail, Phone, MapPin, CreditCard as Edit2, Save, X } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
+import React, { useState, useEffect } from 'react';
+import { User, Mail, Phone, MapPin, Edit2, Save, X } from 'lucide-react';
 import Layout from '../components/Layout';
 import Button from '../components/Button';
+import authService from '../api/authService';
 
 const Profile = () => {
-  const { user, updateProfile } = useAuth();
+  const [user, setUser] = useState(null); // ✅ user fetched dynamically
   const [isEditing, setIsEditing] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [message, setMessage] = useState({ error: '', success: '' });
 
   const [formData, setFormData] = useState({
-    firstName: user?.firstName || '',
-    lastName: user?.lastName || '',
-    phone: user?.phone || '',
-    address: user?.address || '',
+    firstName: '',
+    lastName: '',
+    phone: '',
+    address: '',
   });
+
+  // ✅ Fetch user profile once component mounts
+  useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const profile = await authService.getProfile();
+        setUser(profile);
+        setFormData({
+          firstName: profile?.firstName || '',
+          lastName: profile?.lastName || '',
+          phone: profile?.phone || '',
+          address: profile?.address || '',
+        });
+      } catch (error) {
+        console.error('Failed to load user profile:', error);
+        setMessage({ error: 'Failed to load profile.', success: '' });
+      }
+    };
+
+    fetchUser();
+  }, []);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -28,10 +49,16 @@ const Profile = () => {
     setMessage({ error: '', success: '' });
 
     try {
-      await updateProfile(formData);
+      // ❌ Old: const updateProfile = authService.updateProfile(user); 
+      // that executes immediately instead of defining a function
+      // ✅ Correct:
+      const updatedUser = await authService.updateProfile(formData);
+
+      setUser(updatedUser);
       setMessage({ error: '', success: 'Profile updated successfully!' });
       setIsEditing(false);
     } catch (err) {
+      console.error('Profile update error:', err);
       setMessage({ error: err.message || 'Failed to update profile', success: '' });
     } finally {
       setIsLoading(false);
@@ -39,15 +66,28 @@ const Profile = () => {
   };
 
   const handleCancel = () => {
-    setFormData({
-      firstName: user?.firstName || '',
-      lastName: user?.lastName || '',
-      phone: user?.phone || '',
-      address: user?.address || '',
-    });
+    if (user) {
+      setFormData({
+        firstName: user.firstName || '',
+        lastName: user.lastName || '',
+        phone: user.phone || '',
+        address: user.address || '',
+      });
+    }
     setIsEditing(false);
     setMessage({ error: '', success: '' });
   };
+
+  if (!user) {
+    return (
+      <Layout>
+        <div className="max-w-4xl mx-auto text-center py-10">
+          <div className="animate-spin h-8 w-8 border-4 border-primary border-t-transparent rounded-full mx-auto mb-3" />
+          <p className="text-gray-600">Loading profile...</p>
+        </div>
+      </Layout>
+    );
+  }
 
   return (
     <Layout>
@@ -68,6 +108,7 @@ const Profile = () => {
               )}
             </div>
 
+            {/* ✅ Display success and error messages */}
             {message.error && (
               <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-4">
                 {message.error}
@@ -81,7 +122,7 @@ const Profile = () => {
 
             <form onSubmit={handleSubmit}>
               <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
-                {/** First Name */}
+                {/* First Name */}
                 <div>
                   <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
                     First Name
@@ -102,7 +143,7 @@ const Profile = () => {
                   </div>
                 </div>
 
-                {/** Last Name */}
+                {/* Last Name */}
                 <div>
                   <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
                     Last Name
@@ -123,7 +164,7 @@ const Profile = () => {
                   </div>
                 </div>
 
-                {/** Email */}
+                {/* Email */}
                 <div className="sm:col-span-2">
                   <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                     Email Address
@@ -142,7 +183,7 @@ const Profile = () => {
                   <p className="mt-1 text-xs text-gray-500">Email cannot be changed</p>
                 </div>
 
-                {/** Phone */}
+                {/* Phone */}
                 <div>
                   <label htmlFor="phone" className="block text-sm font-medium text-gray-700">
                     Phone Number
@@ -164,7 +205,7 @@ const Profile = () => {
                   </div>
                 </div>
 
-                {/** Role */}
+                {/* Role */}
                 <div>
                   <label htmlFor="role" className="block text-sm font-medium text-gray-700">
                     Role
@@ -179,7 +220,7 @@ const Profile = () => {
                   </div>
                 </div>
 
-                {/** Address */}
+                {/* Address */}
                 <div className="sm:col-span-2">
                   <label htmlFor="address" className="block text-sm font-medium text-gray-700">
                     Address

@@ -15,13 +15,14 @@ import {
 import { useCart } from '../context/CartContext';
 import { useAuth } from '../contexts/AuthContext';
 import logo from '../assets/velora-logo.png';
+import authService from '../api/authService';
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
 
   const { getCartItemsCount } = useCart();
-  const { user, logoutUser } = useAuth();
+  const [ user, logoutUser ] = useState(authService.getCurrentUser());
 
   const navigate = useNavigate();
   const location = useLocation();
@@ -38,7 +39,7 @@ const Navbar = () => {
   const isActiveLink = (path) => location.pathname === path;
 
   const handleLogout = () => {
-    logoutUser();
+    logoutUser(null);
     setIsUserMenuOpen(false);
     navigate('/');
   };

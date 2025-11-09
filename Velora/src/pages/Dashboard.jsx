@@ -2,9 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { Activity, Calendar, Clock, User } from 'lucide-react';
 import { useAuth } from '../contexts/AuthContext';
 import Layout from '../components/Layout';
+import authService from '../api/authService';
 
 const Dashboard = () => {
   const { user, token } = useAuth();
+  const userData = authService.getCurrentUser();
+  const userToken = localStorage.getItem('token');
   const [stats, setStats] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
